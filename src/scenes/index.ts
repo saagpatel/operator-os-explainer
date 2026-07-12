@@ -4,9 +4,11 @@
  */
 import type { SceneConfig } from "../types/scene.ts";
 import fleet from "./fleet.ts";
+import spine from "./spine.ts";
 
 export const SCENES: Record<string, SceneConfig> = {
 	fleet,
+	spine,
 };
 
 export const SCENE_ORDER: readonly string[] = [
