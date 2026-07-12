@@ -1,6 +1,6 @@
 # Anatomy of an AI Operator OS — Creative + Technical Spec
 
-> **Status:** Mapping / spec only, **v2 (hardened)**. No code in this session. Claude Fable 5 executes the build against this spec in a later session, with Opus for gnarly architecture and Codex for mechanical volume.
+> **Status:** Mapping / spec only, **v2.1 (hardened, prep-complete, reviewed GO)**. No code in this session. Claude Fable 5 executes the build against this spec in a later session, with Opus for gnarly architecture and Codex for mechanical volume.
 > **v2 changelog (hardening pass):** (1) stack reversed Next.js 14 static-export to **Vite + React 19 SPA** (4.1); (2) synthetic-data guarantee rebuilt from regex-denylist to **default-deny closed-vocabulary construction** (3.3), and the example codename pool purged of real names (3.2); (3) deck accessibility now carries **computed contrast ratios** and a required `--ink-deck-muted` fix (4.4); (4) added a **reduced-motion + autoplay behavior spec** against WCAG SC 2.2.2 / 2.3.1 / 2.3.3 (2.5); (5) phases updated to match (5).
 > **v2.1 changelog (prep pass):** authored the run-and-go prep package under `prep/` — frozen audited codename pool (`codenames.md`), DATA-MODEL v2 with a `missionId` correlation key + `activity` reveal events (`DATA-MODEL.md`), the `SceneConfig`/`VizProps` contract (`scene-contract.ts`), the validated `sample-timeline.json` golden fixture, build pins (`STACK.md`), and the launch brief (`FABLE-KICKOFF.md`). Hero mission codename **Corveth** replaces the banned "Meridian". Read `prep/FABLE-KICKOFF.md` first.
 > **Working title:** *Anatomy of an AI Operator OS*
@@ -174,7 +174,7 @@ TypeScript interfaces mirror these columns. (Field names in this section are ill
 - **GuardEvent:** `{layer, ruleConcept, action, outcome:'blocked', adaptation:string, at}` — powers Scene 3. Rule concepts are described, never real command strings.
 - **FreshnessTick:** `{spoke, state:'fresh'|'aging'|'stale'|'unavailable', at}` — powers the Hub scene.
 
-All events carry an `at` on the shared synthetic clock so scenes stay in sync.
+All events carry an `at` on the shared synthetic clock so scenes stay in sync. (This is the illustrative subset; the full event model — ten `kind`s plus the `missionId` correlation key that threads one mission's events across scenes — is authoritative in `prep/DATA-MODEL.md` §2, with a validated instance in `prep/sample-timeline.json`.)
 
 ### 3.2 The invented namespace
 
@@ -295,7 +295,7 @@ Build this scene *fully* before fanning out the others: it proves the whole prim
 *Gate:* capture of a full mission running end to end including a verify-gate block-then-pass; cost ledger reconciles to the synthetic total; 60fps check on the swarm (Canvas).
 
 **Phase 7 — Scene 0 Cold open (Fable).**
-The cinematic ~15s autoplay hero assembled from the now-built primitives, then hands off to the scroll.
+The cinematic ~15s autoplay hero assembled from the now-built primitives, then hands off to the scroll. It threads Scenes 1-4 only (the four hero layers), so it depends on Phases 3-6, not the Hub; assembling it here, after its constituent scenes exist, is why it comes late even though Hub (Phase 8) follows.
 *Gate:* capture of the full cold-open sequence; "explore" invite wired to Scene 1.
 
 **Phase 8 — Scene 5 The Hub (Fable).**
@@ -342,5 +342,5 @@ The coda prose (what this is, why it's rare, the synthetic-by-construction hones
 ## 7. Handoff notes for the Fable build session
 
 - This spec is the contract. Build on a feature branch in `~/Projects/operator-os-explainer` (greenfield, GREEN). Conventional commits, small logical units, verify-before-done per phase.
-- The five-mechanism guarantee in 3.3 is non-negotiable: the app never wires real data in, and the forbidden-pattern build guard must exist and be proven (plant-and-fail test) in Phase 1.
+- The six-mechanism guarantee in 3.3 is non-negotiable: the app never wires real data in, closed-vocabulary generation is closure-tested, and the forbidden-pattern scan is proven (plant-and-fail test) in Phase 1.
 - Keep Scene 3 descriptive. Keep the Bench dressing faithful. Keep the interactivity real and the data synthetic.
