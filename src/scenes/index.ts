@@ -3,12 +3,14 @@
  * routes not yet built fall back to the placeholder in the router.
  */
 import type { SceneConfig } from "../types/scene.ts";
+import coldOpen from "./coldopen.ts";
 import finale from "./finale.ts";
 import fleet from "./fleet.ts";
 import safety from "./safety.ts";
 import spine from "./spine.ts";
 
 export const SCENES: Record<string, SceneConfig> = {
+	"": coldOpen,
 	fleet,
 	spine,
 	safety,
