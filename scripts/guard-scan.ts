@@ -31,7 +31,6 @@ const TEXT_EXT = new Set([
 	".yaml",
 	".yml",
 ]);
-const ROOT_FILES = ["index.html", "vercel.json", "package.json"];
 const ROOT_DIRS = ["src", "scripts"];
 
 // Home-directory path indicators (fragment-assembled; NFKC+lowercase applied).
@@ -136,7 +135,13 @@ function main(): void {
 	const violations: string[] = [];
 	const targets: string[] = [];
 	for (const dir of ROOT_DIRS) if (existsSync(dir)) targets.push(...walk(dir));
-	for (const file of ROOT_FILES) if (existsSync(file)) targets.push(file);
+	// every text file at the repo root (configs, README, index.html, ...)
+	// SPEC.md is a build doc: never shipped (kept out of the release commit
+	// and .vercelignore'd), so it is not part of the publish surface.
+	for (const entry of readdirSync(".")) {
+		if (entry === "SPEC.md") continue;
+		if (!statSync(entry).isDirectory()) targets.push(entry);
+	}
 	if (existsSync("dist")) targets.push(...walk("dist"));
 
 	let scanned = 0;
@@ -147,7 +152,9 @@ function main(): void {
 	}
 
 	if (process.argv.includes("--git")) {
-		const history = execFileSync("git", ["log", "-p", "--all"], {
+		// Scope to HEAD: the publish unit is one branch (push ONLY that branch).
+		// Working branches deliberately carry prep docs that never ship.
+		const history = execFileSync("git", ["log", "-p", "HEAD"], {
 			encoding: "utf8",
 			maxBuffer: 256 * 1024 * 1024,
 		});
