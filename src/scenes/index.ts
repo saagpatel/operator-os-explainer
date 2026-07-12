@@ -6,6 +6,7 @@ import type { SceneConfig } from "../types/scene.ts";
 import coldOpen from "./coldopen.ts";
 import finale from "./finale.ts";
 import fleet from "./fleet.ts";
+import hub from "./hub.ts";
 import safety from "./safety.ts";
 import spine from "./spine.ts";
 
@@ -15,6 +16,7 @@ export const SCENES: Record<string, SceneConfig> = {
 	spine,
 	safety,
 	finale,
+	hub,
 };
 
 export const SCENE_ORDER: readonly string[] = [
