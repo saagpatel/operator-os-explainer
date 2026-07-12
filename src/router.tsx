@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { ConsoleShell } from "./components/shell/ConsoleShell";
+import { FinaleScene } from "./scenes/FinaleScene";
 import { FleetScene } from "./scenes/FleetScene";
 import { PlaceholderScene } from "./scenes/PlaceholderScene";
 import { SafetyScene } from "./scenes/SafetyScene";
@@ -18,7 +19,7 @@ export const router = createBrowserRouter([
 			{ path: "fleet", element: <FleetScene /> },
 			{ path: "spine", element: <SpineScene /> },
 			{ path: "safety", element: <SafetyScene /> },
-			{ path: "finale", element: <PlaceholderScene /> },
+			{ path: "finale", element: <FinaleScene /> },
 			{ path: "hub", element: <PlaceholderScene /> },
 			{ path: "coda", element: <PlaceholderScene /> },
 		],
