@@ -1,7 +1,6 @@
 import { Pause, Play, SkipBack, SkipForward } from "lucide-react";
+import type { Speed } from "../../clock/SessionClockProvider.tsx";
 import { formatClock } from "../../lib/format";
-
-export type Speed = 1 | 1.5 | 2;
 
 export interface TransportBarProps {
 	t: number;

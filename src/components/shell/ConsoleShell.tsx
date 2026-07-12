@@ -1,9 +1,10 @@
-import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import {
+	SessionClockProvider,
+	useSessionClock,
+} from "../../clock/SessionClockProvider.tsx";
 import { SyntheticBadge } from "./SyntheticBadge";
-import { type Speed, TransportBar } from "./TransportBar";
-
-const SESSION_LENGTH_MS = 90_000;
+import { TransportBar } from "./TransportBar";
 
 const NAV = [
 	{ to: "/", label: "00" },
@@ -16,15 +17,21 @@ const NAV = [
 ] as const;
 
 /**
- * The deck-dominant console shell: graphite deck, mono chrome, the persistent
- * transport bar (always-visible Pause, SC 2.2.2) and the synthetic-data badge.
- * Phase 0 drives the transport from local state; the Phase 2 session-clock
- * provider replaces this state and mounts here, ABOVE the outlet (SPEC 4.1).
+ * The deck-dominant console shell. The session-clock provider mounts here,
+ * ABOVE the outlet (SPEC 4.1), so the single rAF loop and clock state survive
+ * scene navigation. The transport bar with its always-visible Pause
+ * (SC 2.2.2) is part of the fixed chrome on every scene.
  */
 export function ConsoleShell() {
-	const [t, setT] = useState(0);
-	const [playing, setPlaying] = useState(false);
-	const [speed, setSpeed] = useState<Speed>(1);
+	return (
+		<SessionClockProvider>
+			<ShellChrome />
+		</SessionClockProvider>
+	);
+}
+
+function ShellChrome() {
+	const clock = useSessionClock();
 
 	return (
 		<div className="flex h-full flex-col bg-deck text-ink-deck">
@@ -56,7 +63,21 @@ export function ConsoleShell() {
 					))}
 				</nav>
 
-				<SyntheticBadge />
+				<div className="flex items-center gap-3">
+					<button
+						type="button"
+						onClick={() => clock.setMotionOverride(!clock.reducedMotion)}
+						aria-pressed={clock.reducedMotion}
+						title="Reduced motion: transitions cut instead of glide, ambient motion off, nothing autoplays. The scrubber keeps working."
+						className="font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted hover:text-ink-deck"
+					>
+						Motion{" "}
+						<span className={clock.reducedMotion ? "text-accent-deck" : ""}>
+							{clock.reducedMotion ? "reduced" : "full"}
+						</span>
+					</button>
+					<SyntheticBadge />
+				</div>
 			</header>
 
 			<main className="min-h-0 flex-1 overflow-auto">
@@ -64,17 +85,15 @@ export function ConsoleShell() {
 			</main>
 
 			<TransportBar
-				t={t}
-				duration={SESSION_LENGTH_MS}
-				playing={playing}
-				speed={speed}
-				onPlayPause={() => setPlaying((p) => !p)}
-				onScrub={setT}
-				onSpeedChange={setSpeed}
-				onStepBack={() => setT((v) => Math.max(0, v - 5_000))}
-				onStepForward={() =>
-					setT((v) => Math.min(SESSION_LENGTH_MS, v + 5_000))
-				}
+				t={clock.t}
+				duration={clock.duration}
+				playing={clock.playing}
+				speed={clock.speed}
+				onPlayPause={clock.toggle}
+				onScrub={clock.scrub}
+				onSpeedChange={clock.setSpeed}
+				onStepBack={clock.stepBack}
+				onStepForward={clock.stepForward}
 			/>
 		</div>
 	);

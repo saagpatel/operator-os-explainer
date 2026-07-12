@@ -1,4 +1,7 @@
 import { useLocation } from "react-router-dom";
+import { useSessionClock } from "../clock/SessionClockProvider.tsx";
+import { useAutoSeek } from "../clock/useAutoSeek.ts";
+import { formatClock } from "../lib/format";
 
 /**
  * Phase 0 placeholder scene route (SPEC 5, Phase 0). Proves deep-linking and
@@ -45,6 +48,10 @@ const SCENES: Record<
 export function PlaceholderScene() {
 	const { pathname } = useLocation();
 	const scene = SCENES[pathname] ?? SCENES["/"];
+	const clock = useSessionClock();
+	useAutoSeek(0);
+	const visible = clock.eventsUpTo(clock.t).length;
+	const total = clock.dataset.events.length;
 
 	return (
 		<section className="relative flex min-h-full flex-col items-center justify-center px-6 py-16">
@@ -74,9 +81,14 @@ export function PlaceholderScene() {
 					</p>
 				</div>
 
-				<p className="mt-8 font-instrument text-[12px] tabular-nums text-ink-deck-muted">
-					SESSION 2026-03-16T00:00:00Z · T={"{"}0..90000{"}"} ·{" "}
-					<span className="text-accent-deck">AWAITING TIMELINE</span>
+				<p
+					data-testid="scene-telemetry"
+					className="mt-8 font-instrument text-[12px] tabular-nums text-ink-deck-muted"
+				>
+					SESSION 2026-03-16 · T+{formatClock(clock.t)} ·{" "}
+					<span className="text-accent-deck">
+						{visible}/{total} EVENTS
+					</span>
 				</p>
 			</div>
 		</section>
