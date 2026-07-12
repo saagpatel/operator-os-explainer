@@ -1,18 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { describe, expect, it } from "vitest";
-import { PlaceholderScene } from "../../scenes/PlaceholderScene";
+import { CodaScene } from "../../scenes/CodaScene";
+import { FleetScene } from "../../scenes/FleetScene";
 import { ConsoleShell } from "./ConsoleShell";
 
-function renderShell(initialPath = "/") {
+function renderShell(initialPath = "/coda") {
 	const router = createMemoryRouter(
 		[
 			{
 				path: "/",
 				element: <ConsoleShell />,
 				children: [
-					{ index: true, element: <PlaceholderScene /> },
-					{ path: "fleet", element: <PlaceholderScene /> },
+					{ path: "coda", element: <CodaScene /> },
+					{ path: "fleet", element: <FleetScene /> },
 				],
 			},
 		],
@@ -29,7 +30,7 @@ describe("ConsoleShell", () => {
 
 	it("shows the synthetic-data badge in the chrome", () => {
 		renderShell();
-		expect(screen.getByText(/synthetic data/i)).toBeInTheDocument();
+		expect(screen.getAllByText(/synthetic data/i).length).toBeGreaterThan(0);
 	});
 
 	it("resolves a deep-linked scene route", () => {

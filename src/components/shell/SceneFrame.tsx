@@ -19,12 +19,13 @@ export function SceneFrame({
 	const number = String(config.number).padStart(2, "0");
 	return (
 		<section className="relative mx-auto flex min-h-full w-full max-w-6xl flex-col px-4 py-8 sm:px-6">
+			{/* decorative ghost numeral: pseudo-element content keeps it out of
+			    the a11y tree and text-contrast analysis alike */}
 			<span
 				aria-hidden="true"
-				className="pointer-events-none absolute right-4 top-2 select-none font-display text-[7rem] leading-none text-ink-deck-muted opacity-10 sm:text-[9rem]"
-			>
-				{number}
-			</span>
+				data-number={number}
+				className="pointer-events-none absolute right-4 top-2 select-none font-display text-[7rem] leading-none text-ink-deck-muted opacity-10 before:content-[attr(data-number)] sm:text-[9rem]"
+			/>
 
 			<header className="mb-6">
 				<p className="font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted">
