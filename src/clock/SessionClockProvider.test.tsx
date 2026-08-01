@@ -25,6 +25,26 @@ function Probe() {
 			<button type="button" onClick={() => clock.stepForward()}>
 				step
 			</button>
+			<a data-testid="link" href="#details">
+				<span data-testid="link-child">link child</span>
+			</a>
+			<button data-testid="button" type="button">
+				<span data-testid="button-child">button child</span>
+			</button>
+			<input data-testid="input" defaultValue="editable input" />
+			<div
+				contentEditable
+				data-testid="contenteditable"
+				suppressContentEditableWarning
+			>
+				<span data-testid="contenteditable-child">editable child</span>
+			</div>
+			<div data-testid="custom-control" role="slider" tabIndex={0}>
+				<span data-testid="custom-control-child">custom control child</span>
+			</div>
+			<div>
+				<span data-testid="non-interactive-child">page content</span>
+			</div>
 		</div>
 	);
 }
@@ -35,6 +55,18 @@ function renderProbe() {
 			<Probe />
 		</SessionClockProvider>,
 	);
+}
+
+const transportKeys = [" ", "ArrowLeft", "ArrowRight", "Home", "End"] as const;
+
+function dispatchCancelableKeyDown(target: Element, key: string) {
+	const event = new KeyboardEvent("keydown", {
+		key,
+		bubbles: true,
+		cancelable: true,
+	});
+	fireEvent(target, event);
+	return event;
 }
 
 describe("SessionClockProvider", () => {
@@ -80,4 +112,73 @@ describe("SessionClockProvider", () => {
 		fireEvent.keyDown(window, { key: "Home" });
 		expect(screen.getByTestId("t").textContent).toBe("0");
 	});
+
+	describe.each([
+		["link", "link"],
+		["button", "button"],
+		["input", "input"],
+		["contenteditable region", "contenteditable"],
+		["custom interactive control", "custom-control"],
+	] as const)("interactive target: %s", (_label, testId) => {
+		it.each(transportKeys)(
+			"leaves %s to the focused control without preventing its default",
+			(key) => {
+				renderProbe();
+				fireEvent.click(screen.getByText("seek800"));
+
+				const target = screen.getByTestId(testId);
+				target.focus();
+				expect(document.activeElement).toBe(target);
+				const event = dispatchCancelableKeyDown(target, key);
+
+				expect(event.defaultPrevented).toBe(false);
+				expect(screen.getByTestId("t").textContent).toBe("800");
+				expect(screen.getByTestId("playing").textContent).toBe("false");
+			},
+		);
+	});
+
+	it.each([
+		["link", "link-child"],
+		["button", "button-child"],
+		["contenteditable region", "contenteditable-child"],
+		["custom interactive control", "custom-control-child"],
+	] as const)(
+		"applies the interactive guard to a %s descendant",
+		(_label, testId) => {
+			renderProbe();
+			fireEvent.click(screen.getByText("seek800"));
+
+			const event = dispatchCancelableKeyDown(
+				screen.getByTestId(testId),
+				"ArrowRight",
+			);
+
+			expect(event.defaultPrevented).toBe(false);
+			expect(screen.getByTestId("t").textContent).toBe("800");
+		},
+	);
+
+	it.each([
+		[" ", "800", "true"],
+		["ArrowLeft", "0", "false"],
+		["ArrowRight", "1500", "false"],
+		["Home", "0", "false"],
+		["End", "90000", "false"],
+	] as const)(
+		"keeps the %s shortcut global on non-interactive page content",
+		(key, expectedT, expectedPlaying) => {
+			renderProbe();
+			fireEvent.click(screen.getByText("seek800"));
+
+			const event = dispatchCancelableKeyDown(
+				screen.getByTestId("non-interactive-child"),
+				key,
+			);
+
+			expect(event.defaultPrevented).toBe(true);
+			expect(screen.getByTestId("t").textContent).toBe(expectedT);
+			expect(screen.getByTestId("playing").textContent).toBe(expectedPlaying);
+		},
+	);
 });
