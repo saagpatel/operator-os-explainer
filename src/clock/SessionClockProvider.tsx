@@ -60,6 +60,26 @@ export interface SessionClock {
 
 const SessionClockContext = createContext<SessionClock | null>(null);
 
+const INTERACTIVE_SHORTCUT_TARGET_SELECTOR = [
+	"a[href]",
+	"button",
+	"input",
+	"select",
+	"textarea",
+	"summary",
+	"audio[controls]",
+	"video[controls]",
+	'[contenteditable]:not([contenteditable="false"])',
+	"[tabindex]",
+].join(",");
+
+export function isInteractiveShortcutTarget(target: EventTarget | null): boolean {
+	return (
+		target instanceof Element &&
+		target.closest(INTERACTIVE_SHORTCUT_TARGET_SELECTOR) !== null
+	);
+}
+
 export function SessionClockProvider({ children }: { children: ReactNode }) {
 	const duration = dataset.meta.sessionLengthMs;
 	const [t, setT] = useState(0);
@@ -132,15 +152,7 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 	// ---- keyboard transport (SPEC 4.6): Space, arrows, Home/End ----
 	useEffect(() => {
 		const onKey = (e: KeyboardEvent) => {
-			const el = e.target as HTMLElement;
-			if (
-				el.tagName === "INPUT" ||
-				el.tagName === "TEXTAREA" ||
-				el.tagName === "SELECT" ||
-				el.isContentEditable
-			)
-				return;
-			if (e.key === " " && el.tagName === "BUTTON") return; // native activation
+			if (isInteractiveShortcutTarget(e.target)) return;
 			switch (e.key) {
 				case " ":
 					e.preventDefault();

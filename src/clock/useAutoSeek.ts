@@ -8,14 +8,16 @@ import { useSessionClock } from "./SessionClockProvider.tsx";
  * Runs once per scene mount; scrubbing afterwards is the reader's.
  */
 export function useAutoSeek(tStart: number): void {
-	const { scrub } = useSessionClock();
+	const { duration, scrub } = useSessionClock();
 	const [params] = useSearchParams();
 	const done = useRef(false);
 	useEffect(() => {
 		if (done.current) return;
 		done.current = true;
-		const q = params.get("t");
-		const parsed = q === null ? Number.NaN : Number(q);
-		scrub(Number.isFinite(parsed) ? parsed : tStart);
-	}, [params, scrub, tStart]);
+		const rawTime = params.get("t");
+		const parsed = rawTime?.trim() ? Number(rawTime) : Number.NaN;
+		const isInSession =
+			Number.isFinite(parsed) && parsed >= 0 && parsed <= duration;
+		scrub(isInSession ? parsed : tStart);
+	}, [duration, params, scrub, tStart]);
 }
