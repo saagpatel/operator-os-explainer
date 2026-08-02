@@ -1,4 +1,5 @@
 import { formatClock } from "../../lib/format";
+import { useVizScale } from "../../lib/useVizScale";
 import type { SyntheticEvent } from "../../types/data.ts";
 import type { VizProps } from "../../types/scene.ts";
 
@@ -11,6 +12,30 @@ const H = 400;
 const LINE_Y = 200;
 const GATE_X = 96;
 const NOTION = { x: 290, y: 110 };
+
+/**
+ * This viz already draws into a 400-unit box, so it needs no re-composition to
+ * stay legible on a phone: the shared label floor is enough. What it does need
+ * is room for those larger labels, so the left-anchored runs start at the edge
+ * and the SHIPPED card spans the full canvas.
+ */
+interface GateGeometry {
+	viewBox: string;
+	attemptX: number;
+	shipped: { rect: { x: number; width: number }; textX: number };
+}
+
+const WIDE: GateGeometry = {
+	viewBox: `0 0 ${W} ${H}`,
+	attemptX: GATE_X - 24,
+	shipped: { rect: { x: 150, width: 220 }, textX: 162 },
+};
+
+const COMPACT: GateGeometry = {
+	viewBox: `0 0 ${W} ${H}`,
+	attemptX: 12,
+	shipped: { rect: { x: 12, width: 376 }, textX: 24 },
+};
 
 /**
  * Scene 4: the verify gate and the ship ripple. The gate is allowed to say
@@ -47,10 +72,12 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 	const rippleProgress = ship
 		? Math.min(1, Math.max(0, (t - ship.at) / 600))
 		: 0;
+	const { ref, variant: g, fs } = useVizScale({ wide: WIDE, compact: COMPACT });
 
 	return (
 		<svg
-			viewBox={`0 0 ${W} ${H}`}
+			ref={ref}
+			viewBox={g.viewBox}
 			role="img"
 			aria-label="The mission commit meets the verify gate, which blocks attempt one, passes attempt two, and then the SHIPPED tag syncs outward to the external build log."
 			className="block h-full w-full"
@@ -112,7 +139,7 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 					y={LINE_Y + 56}
 					textAnchor="middle"
 					className="font-instrument"
-					fontSize={10}
+					fontSize={fs(10)}
 					fill={gateStroke}
 					style={{ letterSpacing: "0.12em" }}
 				>
@@ -125,10 +152,10 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 				{verifies.map((v) => (
 					<text
 						key={v.id}
-						x={GATE_X - 24}
+						x={g.attemptX}
 						y={LINE_Y + 84 + (v.attempt - 1) * 18}
 						className="font-instrument"
-						fontSize={10.5}
+						fontSize={fs(10.5)}
 						fill={
 							v.result === "block" ? "var(--accent-deck)" : "var(--ink-deck)"
 						}
@@ -179,9 +206,9 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 			{shippedActivity ? (
 				<g data-testid="shipped-card">
 					<rect
-						x={150}
+						x={g.shipped.rect.x}
 						y={LINE_Y + 16}
-						width={220}
+						width={g.shipped.rect.width}
 						height={44}
 						rx={3}
 						fill="var(--deck)"
@@ -189,20 +216,20 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 						strokeWidth={1}
 					/>
 					<text
-						x={162}
+						x={g.shipped.textX}
 						y={LINE_Y + 34}
 						className="font-instrument"
-						fontSize={10}
+						fontSize={fs(10)}
 						fill="var(--ink-deck)"
 						style={{ letterSpacing: "0.06em" }}
 					>
 						{shippedActivity.summary}
 					</text>
 					<text
-						x={162}
+						x={g.shipped.textX}
 						y={LINE_Y + 50}
 						className="font-instrument"
-						fontSize={9.5}
+						fontSize={fs(9.5)}
 						fill="var(--accent-deck)"
 						style={{ letterSpacing: "0.14em" }}
 					>
@@ -252,7 +279,7 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 						y={NOTION.y + 3}
 						textAnchor="middle"
 						className="font-instrument"
-						fontSize={9.5}
+						fontSize={fs(9.5)}
 						fill="var(--ink-deck)"
 						style={{ letterSpacing: "0.1em" }}
 					>
@@ -263,7 +290,7 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 						y={NOTION.y + 16}
 						textAnchor="middle"
 						className="font-instrument"
-						fontSize={8.5}
+						fontSize={fs(8.5)}
 						fill="var(--ink-deck-muted)"
 						style={{ letterSpacing: "0.06em" }}
 					>
@@ -278,7 +305,7 @@ export function VerifyGate({ events, t, reducedMotion, dataset }: VizProps) {
 					x={12}
 					y={H - 18}
 					className="font-instrument"
-					fontSize={10}
+					fontSize={fs(10)}
 					fill="var(--ink-deck-muted)"
 					style={{ letterSpacing: "0.08em" }}
 				>

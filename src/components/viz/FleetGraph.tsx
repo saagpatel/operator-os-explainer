@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { ROUTING, type TaskClass, WHY_HERE } from "../../data/vocab.ts";
 import { formatClock } from "../../lib/format";
+import { useVizScale } from "../../lib/useVizScale";
 import type { FleetNode, SyntheticEvent } from "../../types/data.ts";
 import type { VizProps } from "../../types/scene.ts";
 
@@ -51,21 +52,125 @@ const CONNECTORS: readonly [FleetNode, FleetNode][] = [
 
 const NODE_R = 48;
 
-/** Endpoint pair trimmed by node radius so lines meet rings, not centers. */
-function trimmed(a: FleetNode, b: FleetNode) {
-	const na = NODES[a];
-	const nb = NODES[b];
+interface FleetGeometry {
+	viewBox: string;
+	pos: Record<FleetNode, { x: number; y: number }>;
+	nodeR: number;
+	/**
+	 * Units below a node reserved for its label stack. A connector leaving
+	 * downward starts beneath this band instead of running through the text.
+	 * Zero on the wide canvas, where labels never sit on a connector.
+	 */
+	labelBand: number;
+	/** Baseline offsets from the node edge for the name and the persona line. */
+	nameDy: number;
+	personaDy: number;
+	/** The second descriptor line; dropped where the canvas cannot carry it. */
+	showSub: boolean;
+	personaTracking: string;
+	/** Fixed home for the routing annotation, or null to hang it off the node. */
+	whyHere: { x: number; y: number } | null;
+	/** Off-canvas point a routed chip flies in from. */
+	chipOrigin: { x: number; y: number };
+	/** Per-node ornament radii, stated outright so the wide canvas is exact. */
+	art: {
+		claudeAiInner: number;
+		ccInner: number;
+		codexCore: number;
+		codexOrbit: number;
+		codexDot: number;
+		autoBody: number;
+		autoLens: number;
+		autoLensDx: number;
+		autoLensDy: number;
+	};
+}
+
+const WIDE: FleetGeometry = {
+	viewBox: "0 0 960 560",
+	pos: {
+		claude_ai: { x: 190, y: 280 },
+		cc: { x: 620, y: 130 },
+		codex: { x: 620, y: 430 },
+		autonomous: { x: 830, y: 280 },
+	},
+	nodeR: NODE_R,
+	labelBand: 0,
+	nameDy: 22,
+	personaDy: 40,
+	showSub: true,
+	personaTracking: "0.08em",
+	whyHere: null,
+	chipOrigin: { x: 480, y: 620 },
+	art: {
+		claudeAiInner: 30,
+		ccInner: 38,
+		codexCore: 30,
+		codexOrbit: 44,
+		codexDot: 4,
+		autoBody: 40,
+		autoLens: 6,
+		autoLensDx: 14,
+		autoLensDy: -16,
+	},
+};
+
+/**
+ * Compact: the constellation turned portrait. The fork survives (one writer
+ * branching into two pairs of hands, with the night auditor tethered to Claude
+ * Code), but the second descriptor line is dropped: two 200-unit captions
+ * cannot sit side by side in 340 units at a legible size. The full descriptor
+ * for every system stays on the page in the routing table below.
+ */
+const COMPACT: FleetGeometry = {
+	viewBox: "0 0 340 560",
+	pos: {
+		claude_ai: { x: 170, y: 62 },
+		cc: { x: 96, y: 216 },
+		codex: { x: 252, y: 216 },
+		autonomous: { x: 170, y: 392 },
+	},
+	nodeR: 34,
+	labelBand: 46,
+	nameDy: 18,
+	personaDy: 34,
+	showSub: false,
+	personaTracking: "0.02em",
+	whyHere: { x: 170, y: 522 },
+	chipOrigin: { x: 170, y: 600 },
+	art: {
+		claudeAiInner: 21,
+		ccInner: 27,
+		codexCore: 21,
+		codexOrbit: 31,
+		codexDot: 3,
+		autoBody: 28,
+		autoLens: 4.5,
+		autoLensDx: 10,
+		autoLensDy: -11,
+	},
+};
+
+/**
+ * Endpoint pair trimmed so lines meet rings, not centers. Where a node carries
+ * a label band, a downward connector is clipped to start below it.
+ */
+function connector(g: FleetGeometry, a: FleetNode, b: FleetNode) {
+	const na = g.pos[a];
+	const nb = g.pos[b];
 	const dx = nb.x - na.x;
 	const dy = nb.y - na.y;
 	const len = Math.hypot(dx, dy);
 	const ux = dx / len;
 	const uy = dy / len;
-	return {
-		x1: na.x + ux * NODE_R,
-		y1: na.y + uy * NODE_R,
-		x2: nb.x - ux * NODE_R,
-		y2: nb.y - uy * NODE_R,
-	};
+	let x1 = na.x + ux * g.nodeR;
+	let y1 = na.y + uy * g.nodeR;
+	const bandBottom = na.y + g.nodeR + g.labelBand;
+	if (g.labelBand > 0 && dy > 0 && y1 < bandBottom) {
+		y1 = bandBottom;
+		x1 = na.x + (dx * (bandBottom - na.y)) / dy;
+	}
+	return { x1, y1, x2: nb.x - ux * g.nodeR, y2: nb.y - uy * g.nodeR };
 }
 
 function connectorKey(from: FleetNode, to: FleetNode): string | null {
@@ -93,6 +198,12 @@ export function FleetGraph({
 	const selected =
 		interaction.kind === "taskChipRoute" ? interaction.selectedTaskClass : null;
 	const selectedNode = selected ? ROUTING[selected as TaskClass] : null;
+	const {
+		ref,
+		variant: g,
+		fs,
+		compact,
+	} = useVizScale({ wide: WIDE, compact: COMPACT });
 
 	const litKeys = new Set<string>();
 	for (const d of dispatches) {
@@ -103,18 +214,19 @@ export function FleetGraph({
 	}
 
 	const docked = dispatches.filter((d) => d.id >= INJECTED_ID_FLOOR);
+	const r = g.nodeR;
 
 	return (
-		<div className="relative">
+		<div className="relative" ref={ref}>
 			<svg
-				viewBox="0 0 960 560"
+				viewBox={g.viewBox}
 				role="img"
 				aria-label="The four fleet systems as a constellation: Claude.ai dispatching into Claude Code and Codex, with the autonomous night auditor tethered to Claude Code."
 				className="block w-full"
 			>
 				{/* ---- connectors ---- */}
 				{CONNECTORS.map(([a, b]) => {
-					const { x1, y1, x2, y2 } = trimmed(a, b);
+					const { x1, y1, x2, y2 } = connector(g, a, b);
 					const key = `${a}-${b}`;
 					const lit = litKeys.has(key);
 					return (
@@ -149,8 +261,8 @@ export function FleetGraph({
 						const age = t - d.at;
 						if (age < 0 || age > d.durationMs) return null;
 						const f = age / d.durationMs;
-						const from = NODES[d.from as FleetNode];
-						const to = NODES[d.to];
+						const from = g.pos[d.from as FleetNode];
+						const to = g.pos[d.to];
 						if (d.from === d.to) {
 							// self-dispatch (essay): an expanding halo instead of travel
 							return (
@@ -158,7 +270,7 @@ export function FleetGraph({
 									key={`pulse-${d.id}`}
 									cx={from.x}
 									cy={from.y}
-									r={NODE_R + 6 + f * 22}
+									r={r + 6 + f * 22}
 									fill="none"
 									stroke="var(--accent-deck)"
 									strokeWidth={1}
@@ -182,7 +294,7 @@ export function FleetGraph({
 
 				{/* ---- nodes ---- */}
 				{(Object.keys(NODES) as FleetNode[]).map((id) => {
-					const n = NODES[id];
+					const n = { ...NODES[id], ...g.pos[id] };
 					const active = selectedNode === id;
 					const ring = active ? "var(--accent-deck)" : "var(--ink-deck-muted)";
 					return (
@@ -192,7 +304,7 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={NODE_R}
+										r={r}
 										fill="none"
 										stroke={ring}
 										strokeWidth={1}
@@ -201,7 +313,7 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={30}
+										r={g.art.claudeAiInner}
 										fill="var(--deck-raised)"
 										stroke={ring}
 										strokeWidth={1}
@@ -213,7 +325,7 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={NODE_R}
+										r={r}
 										fill="none"
 										stroke={ring}
 										strokeWidth={1}
@@ -221,7 +333,7 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={38}
+										r={g.art.ccInner}
 										fill="var(--deck-raised)"
 										stroke={ring}
 										strokeWidth={1}
@@ -233,7 +345,7 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={30}
+										r={g.art.codexCore}
 										fill="var(--deck-raised)"
 										stroke={ring}
 										strokeWidth={1}
@@ -243,9 +355,9 @@ export function FleetGraph({
 										return (
 											<circle
 												key={deg}
-												cx={n.x + Math.cos(rad) * 44}
-												cy={n.y + Math.sin(rad) * 44}
-												r={4}
+												cx={n.x + Math.cos(rad) * g.art.codexOrbit}
+												cy={n.y + Math.sin(rad) * g.art.codexOrbit}
+												r={g.art.codexDot}
 												fill={
 													active ? "var(--accent-deck)" : "var(--deck-line)"
 												}
@@ -259,15 +371,15 @@ export function FleetGraph({
 									<circle
 										cx={n.x}
 										cy={n.y}
-										r={40}
+										r={g.art.autoBody}
 										fill="var(--deck-raised)"
 										stroke={ring}
 										strokeWidth={1}
 									/>
 									<circle
-										cx={n.x + 14}
-										cy={n.y - 16}
-										r={6}
+										cx={n.x + g.art.autoLensDx}
+										cy={n.y + g.art.autoLensDy}
+										r={g.art.autoLens}
 										fill="none"
 										stroke={ring}
 										strokeWidth={1}
@@ -277,10 +389,10 @@ export function FleetGraph({
 
 							<text
 								x={n.x}
-								y={n.y + NODE_R + 22}
+								y={n.y + r + g.nameDy}
 								textAnchor="middle"
 								className="font-instrument"
-								fontSize={13}
+								fontSize={fs(13)}
 								fill="var(--ink-deck)"
 								style={{ letterSpacing: "0.14em" }}
 							>
@@ -288,14 +400,14 @@ export function FleetGraph({
 							</text>
 							<text
 								x={n.x}
-								y={n.y + NODE_R + 40}
+								y={n.y + r + g.personaDy}
 								textAnchor="middle"
 								className="font-instrument"
-								fontSize={10.5}
+								fontSize={fs(10.5)}
 								fill="var(--ink-deck-muted)"
-								style={{ letterSpacing: "0.08em" }}
+								style={{ letterSpacing: g.personaTracking }}
 							>
-								{n.persona} · {n.sub}
+								{g.showSub ? `${n.persona} · ${n.sub}` : n.persona}
 							</text>
 						</g>
 					);
@@ -303,15 +415,21 @@ export function FleetGraph({
 
 				{/* ---- docked reader-routed chips ---- */}
 				{docked.map((d) => {
-					const n = NODES[d.to];
+					const n = g.pos[d.to];
 					const stack = docked.filter((x) => x.to === d.to).indexOf(d);
-					const y = n.y - NODE_R - 18 - stack * 24;
+					const y = n.y - r - 18 - stack * 24;
 					return (
 						<motion.g
 							key={`chip-${d.taskClass}`}
 							data-testid={`chip-docked-${d.taskClass}`}
 							initial={
-								reducedMotion ? false : { x: 480 - n.x, y: 620 - y, opacity: 0 }
+								reducedMotion
+									? false
+									: {
+											x: g.chipOrigin.x - n.x,
+											y: g.chipOrigin.y - y,
+											opacity: 0,
+										}
 							}
 							animate={{ x: 0, y: 0, opacity: 1 }}
 							transition={
@@ -335,7 +453,7 @@ export function FleetGraph({
 								y={y + 3}
 								textAnchor="middle"
 								className="font-instrument"
-								fontSize={11}
+								fontSize={fs(11)}
 								fill="var(--accent-deck)"
 								style={{ letterSpacing: "0.12em" }}
 							>
@@ -348,11 +466,11 @@ export function FleetGraph({
 				{/* ---- why-here annotation at the routed node ---- */}
 				{selected && selectedNode ? (
 					<text
-						x={NODES[selectedNode].x}
-						y={NODES[selectedNode].y + NODE_R + 58}
+						x={g.whyHere ? g.whyHere.x : g.pos[selectedNode].x}
+						y={g.whyHere ? g.whyHere.y : g.pos[selectedNode].y + r + 58}
 						textAnchor="middle"
 						className="font-instrument"
-						fontSize={11}
+						fontSize={fs(11)}
 						fill="var(--accent-deck)"
 						style={{ letterSpacing: "0.06em" }}
 					>
@@ -362,9 +480,16 @@ export function FleetGraph({
 			</svg>
 
 			{/* ---- dispatch log: honest mono telemetry, serves reduced motion ---- */}
+			{/* Overlaid on the wide canvas, where it sits in empty margin. On the
+			    compact canvas five log lines would cover the constellation, so it
+			    takes its own space below instead. */}
 			<div
 				aria-label="Dispatch log"
-				className="pointer-events-none absolute left-3 top-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+				className={
+					compact
+						? "px-1 pt-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+						: "pointer-events-none absolute left-3 top-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+				}
 			>
 				{dispatches.slice(-5).map((d) => (
 					<div key={d.id}>
