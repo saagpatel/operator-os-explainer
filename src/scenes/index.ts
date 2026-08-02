@@ -1,6 +1,6 @@
 /**
- * Scene registry + order (SPEC 4.2). One SceneConfig per scene file;
- * routes not yet built fall back to the placeholder in the router.
+ * Scene registry + order (SPEC 4.2). One SceneConfig per scene file; all
+ * seven are built and mounted as real routes in router.tsx.
  */
 import type { SceneConfig } from "../types/scene.ts";
 import coda from "./coda.ts";

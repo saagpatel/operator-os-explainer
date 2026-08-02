@@ -1,16 +1,24 @@
 // @vitest-environment node
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { closureViolations } from "./closure.ts";
 import { generate, SEED } from "./generate.ts";
 
+// The authored target lives under prep/, which the publish filter strips from
+// the release lineage (RELEASE.md). It is JSON-identical to the committed
+// dataset.json, so where it is absent the byte-for-byte artifact assertion
+// below pins the same generator output.
+const GOLDEN_FIXTURE = "prep/sample-timeline.json";
+const hasGoldenFixture = existsSync(GOLDEN_FIXTURE);
+
 describe("generator determinism + golden fixture", () => {
-	it("reproduces prep/sample-timeline.json exactly at the canonical seed", () => {
-		const golden = JSON.parse(
-			readFileSync("prep/sample-timeline.json", "utf8"),
-		);
-		expect(generate(SEED)).toEqual(golden);
-	});
+	it.runIf(hasGoldenFixture)(
+		"reproduces prep/sample-timeline.json exactly at the canonical seed",
+		() => {
+			const golden = JSON.parse(readFileSync(GOLDEN_FIXTURE, "utf8"));
+			expect(generate(SEED)).toEqual(golden);
+		},
+	);
 
 	it("is byte-identical across two runs", () => {
 		expect(JSON.stringify(generate())).toBe(JSON.stringify(generate()));
