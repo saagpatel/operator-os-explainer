@@ -68,6 +68,12 @@ input[type="range"].transport-scrub {
 	background: transparent;
 	cursor: pointer;
 }
+/* Phone: keep the hairline track but give the control a 44px tap target. */
+@media (max-width: 639px) {
+	input[type="range"].transport-scrub {
+		height: 44px;
+	}
+}
 input[type="range"].transport-scrub::-webkit-slider-runnable-track {
 	height: 2px;
 	background: var(--deck-line);

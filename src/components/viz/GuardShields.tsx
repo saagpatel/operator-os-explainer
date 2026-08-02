@@ -1,21 +1,82 @@
 import { motion } from "motion/react";
 import { GUARD_LAYERS, GUARD_MAP, type RuleConcept } from "../../data/vocab.ts";
 import { formatClock } from "../../lib/format";
+import { useVizScale } from "../../lib/useVizScale";
 import type { SyntheticEvent } from "../../types/data.ts";
 import type { VizProps } from "../../types/scene.ts";
 
 type GuardEvent = Extract<SyntheticEvent, { kind: "guard" }>;
 
-const CX = 480;
-const CY = 300;
-const AGENT_R = 42;
-/** Ring radius by layer index; GUARD_LAYERS is ordered outer -> inner. */
-const ringR = (layerIndex: number) =>
-	AGENT_R + 40 + (GUARD_LAYERS.length - 1 - layerIndex) * 26;
-
 /** The blocked dot travels up-left along a fixed 45-degree radial. */
 const DIAG = Math.SQRT1_2;
-const onRadial = (r: number) => ({ x: CX - r * DIAG, y: CY - r * DIAG });
+
+interface GuardGeometry {
+	viewBox: string;
+	cx: number;
+	cy: number;
+	agentR: number;
+	ringR: (layerIndex: number) => number;
+	/** Ring name above its own ring; null when the legend carries the names. */
+	ringLabel: ((r: number) => { x: number; y: number }) | null;
+	/** Where the "BLOCKED · LAYER" callout sits, given the stop point. */
+	blockedLabel: (stop: { x: number; y: number }) => {
+		x: number;
+		y: number;
+		anchor: "start" | "middle" | "end";
+	};
+	adaptation: {
+		path: string;
+		rect: { x: number; y: number; width: number; height: number };
+		text: { x: number; y: number };
+	};
+	/** Compact only: the layer names as an ordered outer-to-inner list. */
+	legend: { x: number; y: number; step: number } | null;
+}
+
+const WIDE_CX = 480;
+const WIDE_CY = 300;
+
+/** Wide: seven labeled rings, the adaptation branching off to the right. */
+const WIDE: GuardGeometry = {
+	viewBox: "0 0 960 600",
+	cx: WIDE_CX,
+	cy: WIDE_CY,
+	agentR: 42,
+	ringR: (i) => 42 + 40 + (GUARD_LAYERS.length - 1 - i) * 26,
+	ringLabel: (r) => ({ x: WIDE_CX, y: WIDE_CY - r - 5 }),
+	blockedLabel: (stop) => ({ x: stop.x - 14, y: stop.y - 10, anchor: "end" }),
+	adaptation: {
+		path: `M ${WIDE_CX + 42} ${WIDE_CY} Q ${WIDE_CX + 120} ${WIDE_CY + 10} ${WIDE_CX + 170} ${WIDE_CY + 46}`,
+		rect: { x: WIDE_CX + 170, y: WIDE_CY + 32, width: 220, height: 28 },
+		text: { x: WIDE_CX + 280, y: WIDE_CY + 50 },
+	},
+	legend: null,
+};
+
+const CO_CX = 170;
+const CO_CY = 196;
+
+/**
+ * Compact: the concentric shields survive intact, but seven ring names cannot
+ * stack above a 162-unit radius without colliding at a legible size. The names
+ * move to an ordered outer-to-inner legend below the rings, and the ring that
+ * actually fires still calls itself out in place.
+ */
+const COMPACT: GuardGeometry = {
+	viewBox: "0 0 340 600",
+	cx: CO_CX,
+	cy: CO_CY,
+	agentR: 34,
+	ringR: (i) => 34 + 22 + (GUARD_LAYERS.length - 1 - i) * 17,
+	ringLabel: null,
+	blockedLabel: () => ({ x: 330, y: 26, anchor: "end" }),
+	adaptation: {
+		path: `M ${CO_CX} ${CO_CY + 34} Q ${CO_CX + 40} ${CO_CY + 130} ${CO_CX + 30} ${CO_CY + 176}`,
+		rect: { x: 20, y: CO_CY + 176, width: 300, height: 30 },
+		text: { x: 170, y: CO_CY + 196 },
+	},
+	legend: { x: 20, y: 440, step: 21 },
+};
 
 /**
  * Scene 3 hero viz: concentric guard shields around an acting agent.
@@ -33,27 +94,38 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 	const blockedIndex = blocked ? GUARD_LAYERS.indexOf(blocked.layer) : -1;
 	const guardEvents = events.filter((e): e is GuardEvent => e.kind === "guard");
 	const firedLayers = new Set(guardEvents.map((e) => e.layer));
+	const {
+		ref,
+		variant: g,
+		fs,
+		compact,
+	} = useVizScale({ wide: WIDE, compact: COMPACT });
 
-	const stop = blocked ? onRadial(ringR(blockedIndex)) : null;
+	const stopR = blocked ? g.ringR(blockedIndex) : 0;
+	const stop = blocked
+		? { x: g.cx - stopR * DIAG, y: g.cy - stopR * DIAG }
+		: null;
+	const callout = stop ? g.blockedLabel(stop) : null;
 
 	return (
-		<div className="relative">
+		<div className="relative" ref={ref}>
 			<svg
-				viewBox="0 0 960 600"
+				viewBox={g.viewBox}
 				role="img"
 				aria-label="Seven concentric guard layers around an acting agent. A selected risky action travels outward until the matching layer blocks it, and the agent adapts."
 				className="block w-full"
 			>
 				{/* ---- rings, outer to inner ---- */}
 				{GUARD_LAYERS.map((layer, i) => {
-					const r = ringR(i);
+					const r = g.ringR(i);
 					const isBlocking = blocked?.layer === layer;
 					const hasFired = firedLayers.has(layer);
+					const at = g.ringLabel?.(r);
 					return (
 						<g key={layer}>
 							<circle
-								cx={CX}
-								cy={CY}
+								cx={g.cx}
+								cy={g.cy}
 								r={r}
 								fill="none"
 								stroke={
@@ -67,38 +139,40 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 								data-testid={`ring-${layer}`}
 								data-blocking={isBlocking}
 							/>
-							<text
-								x={CX}
-								y={CY - r - 5}
-								textAnchor="middle"
-								className="font-instrument"
-								fontSize={10}
-								fill={
-									isBlocking ? "var(--accent-deck)" : "var(--ink-deck-muted)"
-								}
-								style={{ letterSpacing: "0.1em" }}
-							>
-								{layer}
-							</text>
+							{at ? (
+								<text
+									x={at.x}
+									y={at.y}
+									textAnchor="middle"
+									className="font-instrument"
+									fontSize={fs(10)}
+									fill={
+										isBlocking ? "var(--accent-deck)" : "var(--ink-deck-muted)"
+									}
+									style={{ letterSpacing: "0.1em" }}
+								>
+									{layer}
+								</text>
+							) : null}
 						</g>
 					);
 				})}
 
 				{/* ---- the acting agent ---- */}
 				<circle
-					cx={CX}
-					cy={CY}
-					r={AGENT_R}
+					cx={g.cx}
+					cy={g.cy}
+					r={g.agentR}
 					fill="var(--deck-raised)"
 					stroke="var(--ink-deck)"
 					strokeWidth={1}
 				/>
 				<text
-					x={CX}
-					y={CY + 4}
+					x={g.cx}
+					y={g.cy + 4}
 					textAnchor="middle"
 					className="font-instrument"
-					fontSize={11}
+					fontSize={fs(11)}
 					fill="var(--ink-deck)"
 					style={{ letterSpacing: "0.14em" }}
 				>
@@ -106,13 +180,13 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 				</text>
 
 				{/* ---- the attempt indicator: center -> blocked ring, then holds ---- */}
-				{blocked && stop ? (
+				{blocked && stop && callout ? (
 					<g key={selectedRule}>
 						{!reducedMotion ? (
 							<motion.line
-								x1={CX}
-								y1={CY}
-								initial={{ x2: CX, y2: CY }}
+								x1={g.cx}
+								y1={g.cy}
+								initial={{ x2: g.cx, y2: g.cy }}
 								animate={{ x2: stop.x, y2: stop.y }}
 								transition={{ duration: 0.6, ease: "easeOut" }}
 								stroke="var(--accent-deck)"
@@ -122,8 +196,8 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 							/>
 						) : (
 							<line
-								x1={CX}
-								y1={CY}
+								x1={g.cx}
+								y1={g.cy}
 								x2={stop.x}
 								y2={stop.y}
 								stroke="var(--accent-deck)"
@@ -133,7 +207,7 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 							/>
 						)}
 						<motion.circle
-							initial={reducedMotion ? false : { cx: CX, cy: CY, opacity: 0 }}
+							initial={reducedMotion ? false : { cx: g.cx, cy: g.cy, opacity: 0 }}
 							animate={{ cx: stop.x, cy: stop.y, opacity: 1 }}
 							transition={
 								reducedMotion
@@ -144,11 +218,11 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 							fill="var(--accent-deck)"
 						/>
 						<text
-							x={stop.x - 14}
-							y={stop.y - 10}
-							textAnchor="end"
+							x={callout.x}
+							y={callout.y}
+							textAnchor={callout.anchor}
 							className="font-instrument"
-							fontSize={11}
+							fontSize={fs(11)}
 							fill="var(--accent-deck)"
 							style={{ letterSpacing: "0.14em" }}
 						>
@@ -156,6 +230,30 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 						</text>
 					</g>
 				) : null}
+
+				{/* ---- the layer roster, outer to inner (compact only) ---- */}
+				{g.legend
+					? GUARD_LAYERS.map((layer, i) => {
+							const isBlocking = blocked?.layer === layer;
+							const legend = g.legend;
+							if (!legend) return null;
+							return (
+								<text
+									key={`legend-${layer}`}
+									x={legend.x}
+									y={legend.y + i * legend.step}
+									className="font-instrument"
+									fontSize={fs(10)}
+									fill={
+										isBlocking ? "var(--accent-deck)" : "var(--ink-deck-muted)"
+									}
+									style={{ letterSpacing: "0.1em" }}
+								>
+									{i + 1} · {layer}
+								</text>
+							);
+						})
+					: null}
 
 				{/* ---- the adaptation: reroute, never escalate ---- */}
 				{blocked ? (
@@ -169,27 +267,24 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 						data-testid="adaptation"
 					>
 						<path
-							d={`M ${CX + AGENT_R} ${CY} Q ${CX + 120} ${CY + 10} ${CX + 170} ${CY + 46}`}
+							d={g.adaptation.path}
 							fill="none"
 							stroke="var(--ink-deck)"
 							strokeWidth={1}
 						/>
 						<rect
-							x={CX + 170}
-							y={CY + 32}
-							width={220}
-							height={28}
+							{...g.adaptation.rect}
 							rx={3}
 							fill="var(--deck)"
 							stroke="var(--ink-deck-muted)"
 							strokeWidth={1}
 						/>
 						<text
-							x={CX + 280}
-							y={CY + 50}
+							x={g.adaptation.text.x}
+							y={g.adaptation.text.y}
 							textAnchor="middle"
 							className="font-instrument"
-							fontSize={11}
+							fontSize={fs(11)}
 							fill="var(--ink-deck)"
 							style={{ letterSpacing: "0.1em" }}
 						>
@@ -202,7 +297,11 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 			{/* ---- guard replay log (mono telemetry; serves reduced motion) ---- */}
 			<div
 				aria-label="Guard event log"
-				className="pointer-events-none absolute left-3 top-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+				className={
+					compact
+						? "px-1 pt-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+						: "pointer-events-none absolute left-3 top-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+				}
 			>
 				{guardEvents.map((e) => (
 					<div key={e.id}>

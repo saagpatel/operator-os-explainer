@@ -31,7 +31,9 @@ export function SceneFrame({
 				<p className="font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted">
 					Scene {number} · {config.subtitle}
 				</p>
-				<h1 className="mt-1 font-display text-4xl text-ink-deck sm:text-5xl">
+				{/* Fluid below `sm` so a long title breathes at 320 and still reads as
+				    the deck's display voice; `sm:` and up is the desktop size. */}
+				<h1 className="mt-1 break-words font-display text-[clamp(1.75rem,7vw,2.25rem)] text-ink-deck sm:text-5xl">
 					{config.title}
 				</h1>
 			</header>

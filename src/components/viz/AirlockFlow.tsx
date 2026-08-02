@@ -1,21 +1,75 @@
 import { motion } from "motion/react";
+import { useVizScale } from "../../lib/useVizScale";
 import type { VizProps } from "../../types/scene.ts";
 
-const W = 960;
-const H = 300;
-const CHAMBER_W = 200;
-const CHAMBER_H = 130;
-const CHAMBER_Y = 70;
-const CHAMBER_X = [120, 380, 640] as const;
 const LABELS = ["DRAFT", "APPROVAL", "SEND"] as const;
 
-/** Capsule x-position per completed hubflow stage count (0..3). */
-const capsuleX = (stageCount: number) =>
-	stageCount === 0
-		? -60
-		: stageCount < 3
-			? CHAMBER_X[stageCount - 1] + CHAMBER_W / 2
-			: 920;
+interface AirlockGeometry {
+	viewBox: string;
+	/** Top-left of each chamber, in order. */
+	chambers: readonly { x: number; y: number }[];
+	w: number;
+	h: number;
+	/** The outbound track, drawn through every chamber. */
+	track: { x1: number; y1: number; x2: number; y2: number };
+	outside: { x: number; y: number; anchor: "end" | "middle" };
+	/** Where the capsule rests once `stageCount` chambers are complete. */
+	capsule: (stageCount: number) => { x: number; y: number };
+	/** Baseline the capsule body is drawn at inside its translated group. */
+	capsuleY: number;
+	/** Offsets from the chamber origin for its title and its affordance line. */
+	title: { dx: number; dy: number };
+	affordance: { dx: number; dy: number };
+	sent: { x: number; y: number };
+}
+
+/** Wide: three chambers left to right, the capsule travels along x. */
+const WIDE: AirlockGeometry = {
+	viewBox: "0 0 960 300",
+	chambers: [
+		{ x: 120, y: 70 },
+		{ x: 380, y: 70 },
+		{ x: 640, y: 70 },
+	],
+	w: 200,
+	h: 130,
+	track: { x1: 30, y1: 135, x2: 940, y2: 135 },
+	outside: { x: 940, y: 123, anchor: "end" },
+	capsule: (n) => ({
+		x: n === 0 ? -60 : n < 3 ? 120 + (n - 1) * 260 + 100 : 920,
+		y: 0,
+	}),
+	capsuleY: 135,
+	title: { dx: 100, dy: -12 },
+	affordance: { dx: 100, dy: 116 },
+	sent: { x: 880, y: 169 },
+};
+
+/**
+ * Compact: the same airlock stood on end. Chambers stack, the track runs down
+ * the page and the capsule descends through it, which keeps the "nothing
+ * leaves until it clears every chamber" reading intact on a phone.
+ */
+const COMPACT: AirlockGeometry = {
+	viewBox: "0 0 340 520",
+	chambers: [
+		{ x: 30, y: 60 },
+		{ x: 30, y: 216 },
+		{ x: 30, y: 372 },
+	],
+	w: 280,
+	h: 112,
+	track: { x1: 170, y1: 18, x2: 170, y2: 508 },
+	outside: { x: 170, y: 506, anchor: "middle" },
+	capsule: (n) => ({
+		x: 170,
+		y: n === 0 ? -50 : n < 3 ? 60 + (n - 1) * 156 + 56 : 490,
+	}),
+	capsuleY: 0,
+	title: { dx: 140, dy: -10 },
+	affordance: { dx: 140, dy: 98 },
+	sent: { x: 170, y: 470 },
+};
 
 /**
  * Scene 5 hero viz: the draft -> approval -> send airlock as three literal
@@ -27,36 +81,38 @@ const capsuleX = (stageCount: number) =>
 export function AirlockFlow({ events, reducedMotion }: VizProps) {
 	const stageCount = events.filter((e) => e.kind === "hubflow").length;
 	const sent = stageCount >= 3;
+	const { ref, variant: g, fs } = useVizScale({ wide: WIDE, compact: COMPACT });
 
 	return (
 		<svg
-			viewBox={`0 0 ${W} ${H}`}
+			ref={ref}
+			viewBox={g.viewBox}
 			role="img"
 			aria-label="A three-chamber airlock. The draft capsule moves from the draft chamber through operator approval to the send window, and only then releases."
 			className="block w-full"
 		>
 			{/* the outbound track */}
 			<line
-				x1={30}
-				y1={CHAMBER_Y + CHAMBER_H / 2}
-				x2={W - 20}
-				y2={CHAMBER_Y + CHAMBER_H / 2}
+				x1={g.track.x1}
+				y1={g.track.y1}
+				x2={g.track.x2}
+				y2={g.track.y2}
 				stroke="var(--deck-line)"
 				strokeWidth={1}
 			/>
 			<text
-				x={W - 20}
-				y={CHAMBER_Y + CHAMBER_H / 2 - 12}
-				textAnchor="end"
+				x={g.outside.x}
+				y={g.outside.y}
+				textAnchor={g.outside.anchor}
 				className="font-instrument"
-				fontSize={9}
+				fontSize={fs(9)}
 				fill="var(--ink-deck-muted)"
 				style={{ letterSpacing: "0.14em" }}
 			>
 				OUTSIDE
 			</text>
 
-			{CHAMBER_X.map((x, i) => {
+			{g.chambers.map((c, i) => {
 				const active = stageCount === i + 1;
 				const passedThrough = stageCount > i + 1 || (sent && i === 2);
 				return (
@@ -66,10 +122,10 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 						data-active={active}
 					>
 						<rect
-							x={x}
-							y={CHAMBER_Y}
-							width={CHAMBER_W}
-							height={CHAMBER_H}
+							x={c.x}
+							y={c.y}
+							width={g.w}
+							height={g.h}
 							rx={4}
 							fill={active ? "var(--deck-raised)" : "none"}
 							stroke={
@@ -82,11 +138,11 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 							strokeWidth={active ? 1.5 : 1}
 						/>
 						<text
-							x={x + CHAMBER_W / 2}
-							y={CHAMBER_Y - 12}
+							x={c.x + g.title.dx}
+							y={c.y + g.title.dy}
 							textAnchor="middle"
 							className="font-instrument"
-							fontSize={11}
+							fontSize={fs(11)}
 							fill={active ? "var(--accent-deck)" : "var(--ink-deck-muted)"}
 							style={{ letterSpacing: "0.16em" }}
 						>
@@ -96,11 +152,11 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 						{/* chamber-specific affordances */}
 						{i === 1 ? (
 							<text
-								x={x + CHAMBER_W / 2}
-								y={CHAMBER_Y + CHAMBER_H - 14}
+								x={c.x + g.affordance.dx}
+								y={c.y + g.affordance.dy}
 								textAnchor="middle"
 								className="font-instrument"
-								fontSize={8.5}
+								fontSize={fs(8.5)}
 								fill={
 									stageCount >= 2
 										? "var(--accent-deck)"
@@ -115,11 +171,11 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 						) : null}
 						{i === 2 ? (
 							<text
-								x={x + CHAMBER_W / 2}
-								y={CHAMBER_Y + CHAMBER_H - 14}
+								x={c.x + g.affordance.dx}
+								y={c.y + g.affordance.dy}
 								textAnchor="middle"
 								className="font-instrument"
-								fontSize={8.5}
+								fontSize={fs(8.5)}
 								fill={sent ? "var(--accent-deck)" : "var(--ink-deck-muted)"}
 								style={{ letterSpacing: "0.08em" }}
 							>
@@ -135,7 +191,7 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 				<motion.g
 					data-testid="capsule"
 					data-sent={sent}
-					animate={{ x: capsuleX(stageCount) }}
+					animate={g.capsule(stageCount)}
 					initial={false}
 					transition={
 						reducedMotion
@@ -145,7 +201,7 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 				>
 					<rect
 						x={-34}
-						y={CHAMBER_Y + CHAMBER_H / 2 - 16}
+						y={g.capsuleY - 16}
 						width={68}
 						height={32}
 						rx={16}
@@ -155,10 +211,10 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 					/>
 					<text
 						x={0}
-						y={CHAMBER_Y + CHAMBER_H / 2 + 4}
+						y={g.capsuleY + 4}
 						textAnchor="middle"
 						className="font-instrument"
-						fontSize={9}
+						fontSize={fs(9)}
 						fill="var(--accent-deck)"
 						style={{ letterSpacing: "0.1em" }}
 					>
@@ -169,11 +225,11 @@ export function AirlockFlow({ events, reducedMotion }: VizProps) {
 
 			{sent ? (
 				<text
-					x={880}
-					y={CHAMBER_Y + CHAMBER_H / 2 + 34}
+					x={g.sent.x}
+					y={g.sent.y}
 					textAnchor="middle"
 					className="font-instrument"
-					fontSize={9.5}
+					fontSize={fs(9.5)}
 					fill="var(--ink-deck)"
 					style={{ letterSpacing: "0.12em" }}
 					data-testid="capsule-sent"

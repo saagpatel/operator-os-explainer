@@ -32,13 +32,13 @@ export function TransportBar({
 	onStepForward,
 }: TransportBarProps) {
 	return (
-		<div className="flex items-center gap-4 border-t border-deck-line bg-deck-raised px-4 py-2.5 sm:px-6">
+		<div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-deck-line bg-deck-raised px-4 py-2.5 sm:flex-nowrap sm:gap-y-0 sm:px-6">
 			<div className="flex items-center gap-1">
 				<button
 					type="button"
 					onClick={onPlayPause}
 					aria-label={playing ? "Pause" : "Play"}
-					className="flex h-8 w-8 items-center justify-center rounded-sm border border-deck-line text-accent-deck hover:bg-deck"
+					className="flex h-11 w-11 items-center justify-center rounded-sm border border-deck-line text-accent-deck hover:bg-deck sm:h-8 sm:w-8"
 				>
 					{playing ? (
 						<Pause size={14} strokeWidth={2} aria-hidden="true" />
@@ -50,7 +50,7 @@ export function TransportBar({
 					type="button"
 					onClick={onStepBack}
 					aria-label="Step to previous event"
-					className="flex h-8 w-7 items-center justify-center rounded-sm text-ink-deck-muted hover:text-ink-deck"
+					className="flex h-11 w-11 items-center justify-center rounded-sm text-ink-deck-muted hover:text-ink-deck sm:h-8 sm:w-7"
 				>
 					<SkipBack size={13} strokeWidth={2} aria-hidden="true" />
 				</button>
@@ -58,7 +58,7 @@ export function TransportBar({
 					type="button"
 					onClick={onStepForward}
 					aria-label="Step to next event"
-					className="flex h-8 w-7 items-center justify-center rounded-sm text-ink-deck-muted hover:text-ink-deck"
+					className="flex h-11 w-11 items-center justify-center rounded-sm text-ink-deck-muted hover:text-ink-deck sm:h-8 sm:w-7"
 				>
 					<SkipForward size={13} strokeWidth={2} aria-hidden="true" />
 				</button>
@@ -71,7 +71,7 @@ export function TransportBar({
 
 			<input
 				type="range"
-				className="transport-scrub min-w-0 flex-1"
+				className="transport-scrub order-last min-w-0 flex-1 basis-full sm:order-none sm:basis-0"
 				min={0}
 				max={duration}
 				step={100}
@@ -82,7 +82,7 @@ export function TransportBar({
 			/>
 
 			<div
-				className="flex items-center gap-0.5"
+				className="ml-auto flex items-center gap-0.5 sm:ml-0"
 				role="group"
 				aria-label="Playback speed"
 			>
@@ -92,7 +92,7 @@ export function TransportBar({
 						type="button"
 						onClick={() => onSpeedChange(s)}
 						aria-pressed={speed === s}
-						className={`rounded-sm px-1.5 py-1 font-instrument text-[10px] ${
+						className={`flex h-11 w-11 items-center justify-center rounded-sm font-instrument text-[10px] sm:h-auto sm:w-auto sm:px-1.5 sm:py-1 ${
 							speed === s
 								? "text-accent-deck"
 								: "text-ink-deck-muted hover:text-ink-deck"
