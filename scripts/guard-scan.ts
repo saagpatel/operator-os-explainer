@@ -2,7 +2,7 @@
  * Forbidden-pattern backstop scanner (SPEC 3.3 mechanism 5). The closure test
  * is the real guarantee; this catches mistakes in the allowlists themselves.
  *
- * Scope: src/, scripts/, repo-root config, and dist/ when present.
+ * Scope: src/, scripts/, .github/, repo-root config, and dist/ when present.
  * `--git` extends the scan to full `git log -p` history: run that on the
  * publish branch (Phase 9). The working branch's history deliberately carries
  * prep/build docs whose real-looking documentation paths never ship.
@@ -30,8 +30,9 @@ const TEXT_EXT = new Set([
 	".svg",
 	".yaml",
 	".yml",
+	".sh",
 ]);
-const ROOT_DIRS = ["src", "scripts"];
+const ROOT_DIRS = ["src", "scripts", ".github"];
 
 // Home-directory path indicators (fragment-assembled; NFKC+lowercase applied).
 const HOME_FRAGMENTS = ["/us" + "ers/", "c:\\us" + "ers", "%user" + "profile%"];
