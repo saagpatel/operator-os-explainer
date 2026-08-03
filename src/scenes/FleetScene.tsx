@@ -155,7 +155,7 @@ export function FleetScene() {
 									onClick={() => route(tc)}
 									disabled={docked}
 									aria-label={`Route the ${tc} task to its owner`}
-									className={`rounded-sm border px-3 py-1.5 font-instrument text-[11px] uppercase tracking-[0.12em] ${
+									className={`min-h-11 rounded-sm border px-3 py-1.5 font-instrument text-[11px] uppercase tracking-[0.12em] sm:min-h-0 ${
 										docked
 											? "border-deck-line text-ink-deck-muted opacity-40"
 											: "border-ink-deck-muted text-ink-deck hover:border-accent-deck hover:text-accent-deck"

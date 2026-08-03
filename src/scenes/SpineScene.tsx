@@ -88,7 +88,7 @@ export function SpineScene() {
 							onClick={step}
 							disabled={complete}
 							aria-label="Step the handoff to its next stage"
-							className={`rounded-sm border px-3 py-1.5 font-instrument text-[11px] uppercase tracking-[0.12em] ${
+							className={`min-h-11 rounded-sm border px-3 py-1.5 font-instrument text-[11px] uppercase tracking-[0.12em] sm:min-h-0 ${
 								complete
 									? "border-deck-line text-ink-deck-muted opacity-40"
 									: "border-ink-deck-muted text-ink-deck hover:border-accent-deck hover:text-accent-deck"

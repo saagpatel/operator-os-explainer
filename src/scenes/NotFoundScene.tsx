@@ -16,7 +16,7 @@ export function NotFoundScene() {
 				</p>
 				<Link
 					to="/"
-					className="mt-6 inline-flex rounded-sm border border-deck-line px-4 py-2 font-instrument text-[11px] uppercase tracking-[0.16em] text-accent-deck hover:bg-deck-raised"
+					className="mt-6 inline-flex min-h-11 items-center rounded-sm border border-deck-line px-4 py-2 font-instrument text-[11px] uppercase tracking-[0.16em] text-accent-deck hover:bg-deck-raised"
 				>
 					Return to opening
 				</Link>

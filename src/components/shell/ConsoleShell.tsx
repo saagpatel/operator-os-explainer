@@ -38,9 +38,13 @@ function ShellChrome() {
 			<header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-deck-line px-4 py-3 sm:px-6">
 				<NavLink
 					to="/"
-					className="select-none font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted"
+					className="inline-flex min-h-11 select-none items-center font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted sm:min-h-0"
 				>
-					Anatomy of an <span className="text-ink-deck">AI Operator OS</span>
+					{/* One span so the label stays a single flex item (flex would
+					    otherwise swallow the whitespace between text and span). */}
+					<span>
+						Anatomy of an <span className="text-ink-deck">AI Operator OS</span>
+					</span>
 				</NavLink>
 
 				<nav
@@ -53,9 +57,11 @@ function ShellChrome() {
 							to={to}
 							end={to === "/"}
 							className={({ isActive }) =>
-								isActive
-									? "text-accent-deck"
-									: "text-ink-deck-muted hover:text-ink-deck"
+								`inline-flex min-h-11 min-w-11 items-center justify-center sm:min-h-0 sm:min-w-0 ${
+									isActive
+										? "text-accent-deck"
+										: "text-ink-deck-muted hover:text-ink-deck"
+								}`
 							}
 						>
 							{label}
@@ -69,7 +75,7 @@ function ShellChrome() {
 						onClick={() => clock.setMotionOverride(!clock.reducedMotion)}
 						aria-pressed={clock.reducedMotion}
 						title="Reduced motion: transitions cut instead of glide, ambient motion off, nothing autoplays. The scrubber keeps working."
-						className="font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted hover:text-ink-deck"
+						className="min-h-11 font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted hover:text-ink-deck sm:min-h-0"
 					>
 						Motion{" "}
 						<span className={clock.reducedMotion ? "text-accent-deck" : ""}>
