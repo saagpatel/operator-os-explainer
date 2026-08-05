@@ -14,6 +14,7 @@
 		"typecheck": "tsc -b",
 		"generate": "node scripts/generate-dataset.ts",
 		"guard": "node scripts/guard-scan.ts",
+		"verify:readback": "python3 scripts/test-web-release-readback.py",
 		"verify:live": "node scripts/check-live-parity.ts"
 	},
 	"dependencies": {
