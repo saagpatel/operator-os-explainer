@@ -189,11 +189,21 @@ function inspectDeployment(url: string): Deployment {
 	};
 }
 
-async function fetchBytes(url: string): Promise<{ bytes: ArrayBuffer; type: string }> {
-	const response = await fetch(url, {
-		redirect: "follow",
+type Fetcher = (url: string, init: RequestInit) => Promise<Response>;
+
+export async function fetchBytes(
+	url: string,
+	fetcher: Fetcher = fetch,
+): Promise<{ bytes: ArrayBuffer; type: string }> {
+	const response = await fetcher(url, {
+		redirect: "manual",
 		headers: { "user-agent": "operator-os-explainer-live-parity/1" },
 	});
+	if (response.status >= 300 && response.status < 400) {
+		throw new Error(
+			`${url} redirected with HTTP ${response.status} to ${response.headers.get("location") ?? "an unknown location"}`,
+		);
+	}
 	if (!response.ok) {
 		throw new Error(`${url} returned HTTP ${response.status}`);
 	}

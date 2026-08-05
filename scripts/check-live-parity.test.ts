@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	assetContentTypeError,
 	extractAssetPaths,
+	fetchBytes,
 	metadataErrors,
 	requiredVercelScope,
 	ROUTES,
@@ -75,5 +76,21 @@ describe("live parity contract", () => {
 		expect(assetContentTypeError("/assets/app.css", "text/css; charset=utf-8"))
 			.toBeNull();
 		expect(assetContentTypeError("/og.png", "image/png")).toBeNull();
+	});
+
+	it("rejects route redirects instead of hashing the final root shell", async () => {
+		let redirectMode: RequestInit["redirect"];
+		const redirectingFetch = async (_url: string, init: RequestInit) => {
+			redirectMode = init.redirect;
+			return new Response(null, {
+				status: 302,
+				headers: { location: "/" },
+			});
+		};
+
+		await expect(
+			fetchBytes("https://operator.saagarpatel.dev/coda", redirectingFetch),
+		).rejects.toThrow("redirected with HTTP 302");
+		expect(redirectMode).toBe("manual");
 	});
 });
