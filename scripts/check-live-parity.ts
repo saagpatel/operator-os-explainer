@@ -104,6 +104,21 @@ export function extractAssetPaths(html: string): string[] {
 	return [...new Set([...paths, "/og.png"])].sort();
 }
 
+export function assetContentTypeError(path: string, type: string): string | null {
+	const mediaType = type.split(";", 1)[0]?.trim().toLowerCase() ?? "";
+	let valid = false;
+	if (path.endsWith(".js")) {
+		valid = mediaType.includes("javascript");
+	} else if (path.endsWith(".css")) {
+		valid = mediaType === "text/css";
+	} else if (path === "/og.png") {
+		valid = mediaType === "image/png";
+	}
+	return valid
+		? null
+		: `returned ${type || "no content type"}, not the expected asset type`;
+}
+
 function sha256(bytes: ArrayBuffer | string): string {
 	return createHash("sha256")
 		.update(typeof bytes === "string" ? bytes : Buffer.from(bytes))
@@ -221,7 +236,12 @@ async function verifySurface(baseUrl: string): Promise<SurfaceProof> {
 	}
 	const assetHashes: Record<string, string> = {};
 	for (const path of assetPaths) {
-		const { bytes } = await fetchBytes(new URL(path, base).toString());
+		const assetUrl = new URL(path, base).toString();
+		const { bytes, type } = await fetchBytes(assetUrl);
+		const typeError = assetContentTypeError(path, type);
+		if (typeError) {
+			throw new Error(`${assetUrl} ${typeError}`);
+		}
 		assetHashes[path] = sha256(bytes);
 	}
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+	assetContentTypeError,
 	extractAssetPaths,
 	metadataErrors,
 	requiredVercelScope,
@@ -64,5 +65,15 @@ describe("live parity contract", () => {
 			"/assets/app-b.css",
 			"/og.png",
 		]);
+	});
+
+	it("rejects the SPA HTML fallback when an asset is missing", () => {
+		expect(assetContentTypeError("/assets/app.js", "text/html; charset=utf-8"))
+			.toContain("not the expected asset type");
+		expect(assetContentTypeError("/assets/app.js", "application/javascript"))
+			.toBeNull();
+		expect(assetContentTypeError("/assets/app.css", "text/css; charset=utf-8"))
+			.toBeNull();
+		expect(assetContentTypeError("/og.png", "image/png")).toBeNull();
 	});
 });
