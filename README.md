@@ -31,6 +31,13 @@ redaction**:
 
 The persistent SYNTHETIC DATA badge in the chrome is this contract, visible.
 
+Architecture claims are separately enumerated in
+[`PublicArchitectureManifestV1`](public/architecture-manifest-v1.json). Every
+scene declares the claim IDs it presents, and CI verifies that each reference
+resolves, every manifest claim is used, public evidence is revision-pinned,
+and private or operator-attested evidence is labeled without pretending it is
+publicly verifiable.
+
 ## Accessibility
 
 Always-visible Pause on the global transport (WCAG SC 2.2.2), keyboard

@@ -7,6 +7,7 @@ const fleet: SceneConfig = {
 	title: "The Fleet",
 	subtitle: "routing by gravity",
 	hook: "Four systems, one rule: work flows to the system that owns it.",
+	architectureClaims: ["gravity-based-routing"],
 	eventKinds: ["dispatch", "activity"],
 	tStart: 0,
 	tEnd: 90_000,

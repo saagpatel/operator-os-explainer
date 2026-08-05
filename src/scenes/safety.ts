@@ -7,6 +7,7 @@ const safety: SceneConfig = {
 	title: "The Safety Layers",
 	subtitle: "guards fire, agent adapts",
 	hook: "The system runs autonomously because it is wrapped in independent, overlapping guards.",
+	architectureClaims: ["layered-operation-guards"],
 	eventKinds: ["guard"],
 	tStart: 0,
 	tEnd: 90_000,
