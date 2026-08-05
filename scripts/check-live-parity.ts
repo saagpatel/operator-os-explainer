@@ -6,8 +6,6 @@ import { pathToFileURL } from "node:url";
 
 const CANONICAL_URL = "https://operator.saagarpatel.dev/";
 const PLATFORM_URL = "https://operator-os-explainer.vercel.app/";
-const VERCEL_SCOPE =
-	process.env.VERCEL_TEAM_SCOPE ?? "saagars-projects-b7dca8e2";
 
 export const ROUTES = [
 	"/",
@@ -33,6 +31,18 @@ type SurfaceProof = {
 	routeHashes: Record<string, string>;
 	assetHashes: Record<string, string>;
 };
+
+export function requiredVercelScope(
+	environment: Record<string, string | undefined> = process.env,
+): string {
+	const scope = environment.VERCEL_TEAM_SCOPE?.trim();
+	if (!scope) {
+		throw new Error(
+			"VERCEL_TEAM_SCOPE is required to resolve deployment identity",
+		);
+	}
+	return scope;
+}
 
 function escapeRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -110,6 +120,7 @@ function normalizedBaseUrl(value: string): string {
 
 function inspectDeployment(url: string): Deployment {
 	const command = process.env.VERCEL_BIN ?? "vercel";
+	const scope = requiredVercelScope();
 	const result = spawnSync(
 		command,
 		[
@@ -117,7 +128,7 @@ function inspectDeployment(url: string): Deployment {
 			url,
 			"--format=json",
 			"--scope",
-			VERCEL_SCOPE,
+			scope,
 			"--no-color",
 		],
 		{ encoding: "utf8" },

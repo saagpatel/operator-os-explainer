@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	extractAssetPaths,
 	metadataErrors,
+	requiredVercelScope,
 	ROUTES,
 } from "./check-live-parity.ts";
 
@@ -13,6 +14,15 @@ const metadata = `
 `;
 
 describe("live parity contract", () => {
+	it("requires deployment scope without publishing an account fallback", () => {
+		expect(() => requiredVercelScope({})).toThrow(
+			"VERCEL_TEAM_SCOPE is required",
+		);
+		expect(requiredVercelScope({ VERCEL_TEAM_SCOPE: " team-scope " })).toBe(
+			"team-scope",
+		);
+	});
+
 	it("covers every routed scene plus the unknown-route recovery shell", () => {
 		expect(ROUTES).toEqual([
 			"/",
