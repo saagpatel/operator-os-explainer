@@ -92,7 +92,7 @@ A real publish is the same sequence, run deliberately by hand:
 8. **Deploy preview-first and prove the exact bytes.** Deploy the filtered
    release tree to a preview, then run:
 
-       node scripts/check-live-parity.ts --deployment-url <preview-url>
+       VERCEL_TEAM_SCOPE=<team-slug> node scripts/check-live-parity.ts --deployment-url <preview-url>
 
    The check fails closed unless Vercel can identify a READY deployment and all
    eight routes serve the expected application shell, canonical metadata, and
@@ -101,7 +101,7 @@ A real publish is the same sequence, run deliberately by hand:
 
 9. **Read back both live aliases.** With the Vercel CLI authenticated, run:
 
-       EXPECTED_DEPLOYMENT_ID=<dpl_...> pnpm verify:live
+       VERCEL_TEAM_SCOPE=<team-slug> EXPECTED_DEPLOYMENT_ID=<dpl_...> pnpm verify:live
 
    The command requires `https://operator.saagarpatel.dev/` and
    `https://operator-os-explainer.vercel.app/` to resolve to the same Vercel deployment
