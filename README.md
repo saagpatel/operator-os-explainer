@@ -55,6 +55,19 @@ pnpm guard      # forbidden-pattern scan (add --git for history)
 pnpm build      # production bundle (sourcemaps off)
 ```
 
+## Release readback
+
+The source lineage vendors the standard-library `WebReleaseReadbackV1`
+reference verifier and pins its producer commit and artifact digests under
+`.github/contracts/`. Its three-route SPA manifest provides a bounded,
+credential-free GET receipt for preview and live origins. The existing Vercel
+deployment-identity, eight-route byte parity, canonical metadata, versioned
+asset, guard-scan, and publish-dry-run checks remain mandatory in parallel.
+
+This source-level adoption does not publish the orphan release lineage, deploy
+a preview, or change either public alias. See `RELEASE.md` for the lineage and
+operator boundaries.
+
 ## License
 
 MIT

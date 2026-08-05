@@ -18,6 +18,7 @@ on:
     branches:
       - main
       - recovery/operator-os-explainer-main-20260719
+      - feat/publish-2026-08
 
 permissions:
   contents: read
@@ -59,6 +60,23 @@ jobs:
       # first or the shipped artifact is never scanned. A stale dist is worse
       # than none: it once produced a false RED from a pre-scrub build.
       - run: pnpm build
+
+      - name: Resolve pinned web release readback contract
+        id: web-release-readback
+        run: python3 scripts/resolve-web-release-readback-contract.py >> "$GITHUB_OUTPUT"
+
+      - name: Check out pinned web release readback contract
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.web-release-readback.outputs.repository }}
+          ref: ${{ steps.web-release-readback.outputs.commit }}
+          path: .contract/web-release-readback
+          persist-credentials: false
+
+      - name: Verify pinned web release readback contract
+        env:
+          WEB_RELEASE_READBACK_CONTRACT_ROOT: ${{ github.workspace }}/.contract/web-release-readback
+        run: pnpm verify:readback
 
       - run: pnpm guard
 

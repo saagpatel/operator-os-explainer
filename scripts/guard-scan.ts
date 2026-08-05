@@ -31,6 +31,7 @@ const TEXT_EXT = new Set([
 	".yaml",
 	".yml",
 	".sh",
+	".py",
 ]);
 const ROOT_DIRS = ["src", "scripts", ".github"];
 
@@ -70,6 +71,15 @@ const PUBLIC_ORIGIN_ALLOW = [
 	"https://operator." + "saa" + "gar" + "pat" + "el.dev/",
 	"https://" + "saa" + "gar" + "pat" + "el.dev/",
 ];
+const PUBLIC_BARE_ORIGIN = new RegExp(
+	"https://operator\\." +
+		"sa" +
+		"a" +
+		"gar" +
+		"pat" +
+		"el\\.dev(?![a-z0-9./-])",
+	"g",
+);
 
 const sha256 = (s: string): string =>
 	createHash("sha256").update(s).digest("hex");
@@ -95,6 +105,7 @@ export function scanText(label: string, raw: string): string[] {
 	for (const origin of PUBLIC_ORIGIN_ALLOW) {
 		tokenSurface = tokenSurface.replaceAll(origin, "");
 	}
+	tokenSurface = tokenSurface.replace(PUBLIC_BARE_ORIGIN, "");
 	const tokens = new Set(tokenSurface.match(/[a-z]{4,}/g) ?? []);
 	for (const token of tokens) {
 		if (TOKEN_DENY.has(sha256(token)))
@@ -139,6 +150,14 @@ function selfTest(): void {
 		console.error(
 			`FATAL: guard-scan self-test flagged sanctioned content:\n${clean.join("\n")}`,
 		);
+		process.exit(2);
+	}
+	const bareOrigin = scanText(
+		"self-test",
+		"https://operator." + "saa" + "gar" + "pat" + "el.dev",
+	);
+	if (bareOrigin.length !== 0) {
+		console.error("FATAL: guard-scan rejected the exact bare public origin");
 		process.exit(2);
 	}
 	const lookalike = scanText(

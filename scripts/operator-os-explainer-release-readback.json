@@ -1,0 +1,66 @@
+{
+  "schema": "WebReleaseSentinelManifestV1",
+  "contract_version": "1.0.0",
+  "name": "operator-os-explainer-preview",
+  "defaults": {
+    "timeout_seconds": 10,
+    "max_body_bytes": 65536,
+    "follow_same_origin_redirects": false
+  },
+  "denied_methods": [
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "CONNECT",
+    "TRACE"
+  ],
+  "routes": [
+    {
+      "id": "home",
+      "method": "GET",
+      "route": "/",
+      "expected_status": 200,
+      "required_sentinels": [
+        "<title>Anatomy of an AI Operator OS</title>",
+        "<div id=\"root\"></div>",
+        "https://operator.saagarpatel.dev/"
+      ],
+      "forbidden_sentinels": [
+        "404: NOT_FOUND",
+        "/src/main.tsx",
+        "SPEC.md"
+      ]
+    },
+    {
+      "id": "safety-route",
+      "method": "GET",
+      "route": "/safety",
+      "expected_status": 200,
+      "required_sentinels": [
+        "<title>Anatomy of an AI Operator OS</title>",
+        "<div id=\"root\"></div>"
+      ],
+      "forbidden_sentinels": [
+        "404: NOT_FOUND",
+        "/src/main.tsx",
+        "SPEC.md"
+      ]
+    },
+    {
+      "id": "fallback-route",
+      "method": "GET",
+      "route": "/scene-that-does-not-exist",
+      "expected_status": 200,
+      "required_sentinels": [
+        "<title>Anatomy of an AI Operator OS</title>",
+        "<div id=\"root\"></div>"
+      ],
+      "forbidden_sentinels": [
+        "404: NOT_FOUND",
+        "/src/main.tsx",
+        "SPEC.md"
+      ]
+    }
+  ]
+}
