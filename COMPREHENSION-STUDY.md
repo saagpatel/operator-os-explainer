@@ -40,7 +40,7 @@ first session. Record:
 Before freezing the record, run:
 
 ```sh
-EXPECTED_DEPLOYMENT_ID=<deployment-id> pnpm verify:live
+VERCEL_TEAM_SCOPE=<team-slug> EXPECTED_DEPLOYMENT_ID=<deployment-id> pnpm verify:live
 ```
 
 Both public aliases must resolve to the recorded READY deployment. A route,
