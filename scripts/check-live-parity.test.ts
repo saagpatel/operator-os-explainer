@@ -4,6 +4,7 @@ import {
 	extractAssetPaths,
 	fetchBytes,
 	metadataErrors,
+	requiredExpectedDeploymentId,
 	requiredVercelScope,
 	ROUTES,
 } from "./check-live-parity.ts";
@@ -23,6 +24,15 @@ describe("live parity contract", () => {
 		expect(requiredVercelScope({ VERCEL_TEAM_SCOPE: " team-scope " })).toBe(
 			"team-scope",
 		);
+	});
+
+	it("requires the promoted deployment identity for live readback", () => {
+		expect(() => requiredExpectedDeploymentId({})).toThrow(
+			"EXPECTED_DEPLOYMENT_ID is required",
+		);
+		expect(
+			requiredExpectedDeploymentId({ EXPECTED_DEPLOYMENT_ID: " dpl_verified " }),
+		).toBe("dpl_verified");
 	});
 
 	it("covers every routed scene plus the unknown-route recovery shell", () => {

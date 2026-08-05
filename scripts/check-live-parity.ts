@@ -44,6 +44,18 @@ export function requiredVercelScope(
 	return scope;
 }
 
+export function requiredExpectedDeploymentId(
+	environment: Record<string, string | undefined> = process.env,
+): string {
+	const deploymentId = environment.EXPECTED_DEPLOYMENT_ID?.trim();
+	if (!deploymentId) {
+		throw new Error(
+			"EXPECTED_DEPLOYMENT_ID is required for live alias readback",
+		);
+	}
+	return deploymentId;
+}
+
 function escapeRegex(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -289,6 +301,7 @@ async function main(): Promise<void> {
 		return;
 	}
 
+	const expectedId = requiredExpectedDeploymentId();
 	const canonical = inspectDeployment(CANONICAL_URL);
 	const platform = inspectDeployment(PLATFORM_URL);
 	if (canonical.id !== platform.id) {
@@ -296,8 +309,7 @@ async function main(): Promise<void> {
 			`alias drift: custom=${canonical.id} platform=${platform.id}`,
 		);
 	}
-	const expectedId = process.env.EXPECTED_DEPLOYMENT_ID;
-	if (expectedId && canonical.id !== expectedId) {
+	if (canonical.id !== expectedId) {
 		throw new Error(
 			`deployment drift: expected=${expectedId} actual=${canonical.id}`,
 		);
