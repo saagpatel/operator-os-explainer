@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { createMemoryRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { describe, expect, it } from "vitest";
 import { SessionClockProvider } from "../clock/SessionClockProvider.tsx";
 import { GUARD_LAYERS, GUARD_MAP, RULE_CONCEPTS } from "../data/vocab.ts";

@@ -32,11 +32,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Both arms of the declared engines range. 22.18 is the floor: the
+        # Both arms of the declared engines range. 22.22 is the floor: the
         # first release where `node script.ts` type-stripping is unflagged,
         # which package.json's scripts depend on. Node 23 is excluded because
         # vitest 4 and jsdom 29 exclude it.
-        node: ['22.18', '24']
+        node: ['22.22', '24']
     steps:
       - uses: actions/checkout@v4
 
