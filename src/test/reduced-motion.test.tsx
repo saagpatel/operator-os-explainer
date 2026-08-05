@@ -12,7 +12,8 @@
  * proof: the no-autoplay assertions fail when the preference is ignored.
  */
 import { fireEvent, render, screen } from "@testing-library/react";
-import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { createMemoryRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { afterEach, describe, expect, it } from "vitest";
 import { ConsoleShell } from "../components/shell/ConsoleShell";
 import { ColdOpenScene } from "../scenes/ColdOpenScene";
