@@ -7,6 +7,11 @@ const finale: SceneConfig = {
 	title: "The Fleet in Motion",
 	subtitle: "one mission, end to end",
 	hook: "One mission through the whole machine: fan out, converge, get blocked, adapt, verify, ship, sync.",
+	architectureClaims: [
+		"bridge-sqlite-spine",
+		"isolated-worktree-fanout",
+		"layered-operation-guards",
+	],
 	eventKinds: [
 		"fanout",
 		"guard",

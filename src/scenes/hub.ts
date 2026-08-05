@@ -7,6 +7,7 @@ const hub: SceneConfig = {
 	title: "The Hub",
 	subtitle: "the airlock",
 	hook: "Outbound never goes straight out. Draft, approval, token, send window: an airlock, not a door.",
+	architectureClaims: ["approval-airlock", "freshness-gated-alerts"],
 	eventKinds: ["hubflow", "freshness"],
 	tStart: 0,
 	tEnd: 90_000,

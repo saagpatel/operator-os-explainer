@@ -7,6 +7,7 @@ const spine: SceneConfig = {
 	title: "The Spine",
 	subtitle: "the shared nervous system",
 	hook: "One store every system reads and writes. Nothing moves between systems except through it.",
+	architectureClaims: ["bridge-sqlite-spine"],
 	eventKinds: ["activity", "handoff", "cost"],
 	tStart: 0,
 	tEnd: 90_000,

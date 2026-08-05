@@ -4,6 +4,7 @@
  * scene configs in one commit (the S&N house rule).
  */
 import type { Dataset, SyntheticEvent } from "./data.ts";
+import type { ArchitectureClaimId } from "./architecture.ts";
 
 export type Lens =
 	| "cold-open"
@@ -30,6 +31,7 @@ export interface SceneConfig {
 	title: string;
 	subtitle: string;
 	hook: string; // one-line framing shown on the overlay card
+	architectureClaims: readonly ArchitectureClaimId[]; // provenance IDs in PublicArchitectureManifestV1
 	eventKinds: readonly SyntheticEvent["kind"][]; // streams this scene reads (DATA-MODEL §5)
 	tStart: number; // clock auto-seeks here on route entry (unless ?t= overrides)
 	tEnd: number;

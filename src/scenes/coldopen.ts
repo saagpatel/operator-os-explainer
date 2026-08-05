@@ -7,6 +7,7 @@ const coldOpen: SceneConfig = {
 	title: "Watch one task travel the whole OS",
 	subtitle: "the cold open",
 	hook: "ship the export pipeline for Corveth",
+	architectureClaims: ["deterministic-synthetic-replay"],
 	eventKinds: [
 		"dispatch",
 		"handoff",

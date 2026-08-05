@@ -7,6 +7,10 @@ const coda: SceneConfig = {
 	title: "Coda",
 	subtitle: "what this is, and why it is rare",
 	hook: "Real practice, made legible.",
+	architectureClaims: [
+		"deterministic-synthetic-replay",
+		"public-release-closure",
+	],
 	eventKinds: [],
 	tStart: 90_000,
 	tEnd: 90_000,
