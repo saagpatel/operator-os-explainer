@@ -68,6 +68,7 @@ const TOKEN_DENY = new Set([
 // including bare prose, other hosts, and lookalike suffixes.
 const PUBLIC_ORIGIN_ALLOW = [
 	"https://operator." + "saa" + "gar" + "pat" + "el.dev/",
+	"https://" + "saa" + "gar" + "pat" + "el.dev/",
 ];
 
 const sha256 = (s: string): string =>
