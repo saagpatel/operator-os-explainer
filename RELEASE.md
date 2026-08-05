@@ -37,10 +37,14 @@ there is no clean way back.
 
 ## Publishing
 
-`scripts/publish.sh --dry-run [DIR]` performs the entire procedure against a
-scratch clone and verifies the result. Nothing it does can reach the real
-release branch or any remote. Run it first, every time. It exits non-zero and
-explains itself if any check below fails.
+`scripts/publish.sh --dry-run [DIR]` resolves the exact current `origin/main`
+commit, fetches only that orphan release commit into an isolated repository,
+copies the source tree, and verifies the result. It refuses a missing release
+ref or any source/release merge base. Nothing it does can reach the real release
+branch or any remote. Run it first, every time. It exits non-zero and explains
+itself if any check below fails. `RELEASE_REF` may select another exact release
+ref for recovery testing; the default is current remote release authority, not
+a potentially stale local branch.
 
 A real publish is the same sequence, run deliberately by hand:
 

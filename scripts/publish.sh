@@ -25,7 +25,7 @@ set -euo pipefail
 # lineage or the workflow's `main` trigger can never fire.
 EXCLUDE=(prep SPEC.md evidence .serena)
 
-RELEASE_BRANCH=release
+RELEASE_REF="${RELEASE_REF:-origin/main}"
 PUBLISH_IDENTITY_NAME=operator-os-explainer
 PUBLISH_IDENTITY_EMAIL=noreply@operator-os-explainer.local
 
@@ -50,6 +50,14 @@ fi
 
 SOURCE_REF=$(git rev-parse HEAD)
 SOURCE_DESC=$(git log -1 --format='%h %s' HEAD)
+if ! RELEASE_REF_SHA=$(git rev-parse --verify "${RELEASE_REF}^{commit}"); then
+	echo "FATAL: release ref does not resolve to a commit: $RELEASE_REF" >&2
+	exit 1
+fi
+if git merge-base "$SOURCE_REF" "$RELEASE_REF_SHA" >/dev/null 2>&1; then
+	echo "FATAL: source and release refs share a merge base" >&2
+	exit 1
+fi
 
 if [ "$MODE" = dry-run ]; then
 	if [ -z "$DRY_RUN_DIR" ]; then
@@ -58,9 +66,12 @@ if [ "$MODE" = dry-run ]; then
 	mkdir -p "$DRY_RUN_DIR"
 	WORK="$DRY_RUN_DIR/publish-tree"
 	rm -rf "$WORK"
-	# A local clone of the release branch only: the dry run gets the real
-	# release history to commit onto, with zero risk to the real branch.
-	git clone --quiet --branch "$RELEASE_BRANCH" --single-branch "$REPO_ROOT" "$WORK"
+	# Fetch only the exact current release commit into an isolated repository.
+	# No source-history ref enters the dry run, and no stale local release branch
+	# can silently stand in for the authoritative remote release ref.
+	git init --quiet "$WORK"
+	git -C "$WORK" fetch --quiet --no-tags "$REPO_ROOT" "$RELEASE_REF_SHA"
+	git -C "$WORK" checkout --quiet --detach FETCH_HEAD
 else
 	echo "FATAL: --publish is deliberately not automated in this revision." >&2
 	echo "Follow the numbered procedure in RELEASE.md; it is short, and a" >&2
@@ -81,7 +92,7 @@ done
 
 git add -A
 if git diff --cached --quiet; then
-	echo "publish tree is already identical to $RELEASE_BRANCH; nothing to commit"
+	echo "publish tree is already identical to $RELEASE_REF; nothing to commit"
 else
 	git commit --quiet -m "release: sync from $SOURCE_DESC"
 fi
@@ -123,6 +134,7 @@ echo
 echo "PUBLISH TREE VERIFIED"
 echo "  location:   $WORK"
 echo "  source:     $SOURCE_DESC"
+echo "  release:    $RELEASE_REF @ ${RELEASE_REF_SHA:0:8}"
 echo "  files:      $(git ls-files | wc -l | tr -d ' ') tracked"
 echo "  history:    $(git rev-list --count HEAD) commit(s), root $(git rev-list --max-parents=0 HEAD | cut -c1-8)"
 echo "  identity:   $(git log -1 --format='%an <%ae>')"

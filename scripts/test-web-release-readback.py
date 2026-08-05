@@ -168,6 +168,9 @@ def _verify_existing_checks_remain() -> None:
     publish = (REPO_ROOT / "scripts" / "publish.sh").read_text(encoding="utf-8")
     assert "node scripts/guard-scan.ts --git" in publish
     assert "EXCLUDE=(prep SPEC.md evidence .serena)" in publish
+    assert 'RELEASE_REF="${RELEASE_REF:-origin/main}"' in publish
+    assert 'git merge-base "$SOURCE_REF" "$RELEASE_REF_SHA"' in publish
+    assert 'fetch --quiet --no-tags "$REPO_ROOT" "$RELEASE_REF_SHA"' in publish
 
 
 def main() -> int:
