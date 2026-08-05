@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink } from "react-router";
 import { useSessionClock } from "../clock/SessionClockProvider.tsx";
 import { useAutoSeek } from "../clock/useAutoSeek.ts";
 import { SceneFrame } from "../components/shell/SceneFrame";

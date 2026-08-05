@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject } from "react-router-dom";
+import { createBrowserRouter, type RouteObject } from "react-router";
 import { ConsoleShell } from "./components/shell/ConsoleShell";
 import { CodaScene } from "./scenes/CodaScene";
 import { ColdOpenScene } from "./scenes/ColdOpenScene";

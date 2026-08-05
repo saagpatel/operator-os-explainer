@@ -89,6 +89,26 @@ A real publish is the same sequence, run deliberately by hand:
 7. **Push only the release branch.** `git push origin release:main`. Never push
    dev to `main`, and never push with `--force`.
 
+8. **Deploy preview-first and prove the exact bytes.** Deploy the filtered
+   release tree to a preview, then run:
+
+       VERCEL_TEAM_SCOPE=<team-slug> node scripts/check-live-parity.ts --deployment-url <preview-url>
+
+   The check fails closed unless Vercel can identify a READY deployment and all
+   eight routes serve the expected application shell, canonical metadata, and
+   fetchable versioned assets. Only after this proof may the two public aliases
+   be pointed at that exact preview deployment.
+
+9. **Read back both live aliases.** With the Vercel CLI authenticated, run:
+
+       VERCEL_TEAM_SCOPE=<team-slug> EXPECTED_DEPLOYMENT_ID=<dpl_...> pnpm verify:live
+
+   The command requires `https://operator.saagarpatel.dev/` and
+   `https://operator-os-explainer.vercel.app/` to resolve to the same Vercel deployment
+   ID and the same route and asset bytes. Missing identity is a failure, never
+   an assumed pass. Keep the previous verified deployment URL available for an
+   immediate two-alias rollback.
+
 ## What the guard scan is and is not
 
 `scripts/guard-scan.ts` is a backstop, not the guarantee. The real protection is
@@ -108,7 +128,7 @@ source cannot leak the thing it defends against.
 `.github/workflows/ci.yml` runs typecheck, tests, a fresh build, the guard scan
 and a dataset determinism check on both lineages, on push and on pull request.
 It travels with the publish, which is why `.github` is not on the exclusion
-list. The matrix covers both arms of the supported Node range: `22.18`, the
+list. The matrix covers both arms of the supported Node range: `22.22`, the
 first release where `node script.ts` runs without a flag, which the `scripts/`
 entries in `package.json` depend on, and `24`. Node 23 is excluded because
 vitest and jsdom exclude it.
