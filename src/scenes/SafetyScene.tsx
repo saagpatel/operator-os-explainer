@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import { useSessionClock } from "../clock/SessionClockProvider.tsx";
 import { useAutoSeek } from "../clock/useAutoSeek.ts";
 import { ProseCard } from "../components/shell/ProseCard";
@@ -123,7 +123,7 @@ export function SafetyScene() {
 									type="button"
 									onClick={() => setSelectedRule(rule)}
 									aria-pressed={selectedRule === rule}
-									className={`rounded-sm border px-3 py-1.5 text-left font-instrument text-[11px] ${
+									className={`min-h-11 rounded-sm border px-3 py-1.5 text-left font-instrument text-[11px] sm:min-h-0 ${
 										selectedRule === rule
 											? "border-accent-deck text-accent-deck"
 											: "border-deck-line text-ink-deck hover:border-ink-deck-muted"

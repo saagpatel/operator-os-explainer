@@ -25,7 +25,7 @@ export function DeepPanel({
 				onClick={() => setOpen((o) => !o)}
 				aria-expanded={open}
 				aria-controls={regionId}
-				className="flex w-full items-center justify-between py-3 font-instrument text-[11px] uppercase tracking-[0.2em] text-ink-deck-muted hover:text-ink-deck"
+				className="flex min-h-11 w-full items-center justify-between py-3 font-instrument text-[11px] uppercase tracking-[0.2em] text-ink-deck-muted hover:text-ink-deck"
 			>
 				<span>
 					Go deeper <span className="text-accent-deck">·</span> {title}

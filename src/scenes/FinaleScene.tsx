@@ -99,7 +99,7 @@ export function FinaleScene() {
 										? "Replay the mission"
 										: "Run the mission"
 							}
-							className="rounded-sm border border-accent-deck px-4 py-1.5 font-instrument text-[11px] uppercase tracking-[0.14em] text-accent-deck hover:bg-deck"
+							className="min-h-11 rounded-sm border border-accent-deck px-4 py-1.5 font-instrument text-[11px] uppercase tracking-[0.14em] text-accent-deck hover:bg-deck sm:min-h-0"
 						>
 							{clock.playing
 								? "Pause"
