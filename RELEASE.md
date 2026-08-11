@@ -1,5 +1,10 @@
 # Release procedure
 
+> **Current-state note (2026-08-11).** Remote `main` is the release lineage,
+> current feature branches descend from it, and a fresh checkout has no local
+> `release` ref. Use the proof-carrying approval pilot below for local review.
+> The older two-lineage procedure is retained as historical context only.
+
 This repository keeps two lineages that never meet. Knowing which one you are
 standing on is the whole job; everything else here follows from that.
 
@@ -40,7 +45,57 @@ scratch clone and verifies the result. Nothing it does can reach the real
 release branch or any remote. Run it first, every time. It exits non-zero and
 explains itself if any check below fails.
 
-A real publish is the same sequence, run deliberately by hand:
+### Proof-carrying local approval pilot
+
+The current remote `main` is the release lineage, and feature work is reviewed
+against it. Terminal prose alone cannot prove that a later approval still
+refers to the same base, candidate, checks, or dependency lock. The local pilot
+adds a pinned `proof-pr` receipt plus a strict binding envelope. It is
+intentionally narrower than merge or publication:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/release-approval.py run \
+  --proof-pr-root ../proof-pr \
+  --node-modules /absolute/path/to/lock-matched/node_modules \
+  --output-dir /absolute/path/to/new-empty-evidence-directory \
+  --now "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+```
+
+The policy pins the current `origin/main` commit, and the candidate must descend
+from that exact base. A moved base fails closed. The dependency directory must
+be pre-provisioned and its `.pnpm/lock.yaml` must be byte-identical to this
+checkout's `pnpm-lock.yaml`. The pilot never installs packages. It runs the
+same typecheck, tests, build, guard scan, and deterministic-dataset check as CI,
+then writes owner-only logs, `proof-pr.json`, and `release-approval.json`.
+Verify a still-current bundle with an explicit clock:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 python3 -B scripts/release-approval.py verify \
+  --proof-pr-root ../proof-pr \
+  --approval /absolute/path/to/evidence/release-approval.json \
+  --now "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+```
+
+`GO` means only that the committed local candidate, pinned `origin/main` base,
+pinned proof-pr validator, lock-matched dependencies, captured evidence, and
+candidate tree all match within the 15-minute policy window.
+Missing, malformed, stale, contradictory, symlinked, digest-mismatched, or
+extra bypass-shaped input is `NO_GO` with exit 2. The verifier always emits
+`publication_authorized: false`.
+
+Rollback is simply to revert the pilot commit and continue using this existing
+manual review procedure. Deleting an unconsumed local evidence directory has
+no remote or runtime effect. This pilot does not authorize a merge, push, preview
+deployment, alias promotion, release, or production-adoption claim.
+
+### Legacy two-lineage procedure
+
+The procedure below describes the former disjoint-lineage workflow. It is not
+the current merge path, and this pilot does not invoke or authorize it. Retain
+it only as migration history until the repository owner removes or rewrites the
+obsolete tooling deliberately.
+
+A legacy publish used the following sequence, run deliberately by hand:
 
 1. **Start clean.** Commit or stash everything on dev. The tree that ships is
    built from `HEAD`, so uncommitted work simply will not appear.

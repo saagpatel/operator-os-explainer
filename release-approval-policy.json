@@ -1,0 +1,24 @@
+{
+  "schema_version": "operator-os-explainer.release-approval-policy.v1",
+  "proof_pr": {
+    "commit": "13a38bde216cdef83273c0cad25a87306e798d4e",
+    "version": "0.2.14"
+  },
+  "max_age_seconds": 900,
+  "base_ref": "origin/main",
+  "base_commit": "6c2a72e6d9c5bbfdf2f8867fa86afb783a13a5c6",
+  "required_evidence": [
+    "typecheck",
+    "tests",
+    "build",
+    "guard-scan",
+    "dataset-determinism"
+  ],
+  "ignored_paths": [
+    ".serena",
+    "SPEC.md",
+    "evidence",
+    "prep"
+  ],
+  "claim_ceiling": "Local proof that one committed operator-os-explainer candidate derived from the pinned origin/main base passed the current CI-equivalent checks with the pinned proof-pr validator and lock-matched pre-provisioned dependencies. It is not permission to merge, push, deploy, promote aliases, or claim production adoption."
+}
