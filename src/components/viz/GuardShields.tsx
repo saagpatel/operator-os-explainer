@@ -295,8 +295,10 @@ export function GuardShields({ events, reducedMotion, interaction }: VizProps) {
 			</svg>
 
 			{/* ---- guard replay log (mono telemetry; serves reduced motion) ---- */}
-			<div
-				aria-label="Guard event log"
+				<div
+					role="log"
+					aria-label="Guard event log"
+					aria-live="polite"
 				className={
 					compact
 						? "px-1 pt-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"

@@ -1,10 +1,12 @@
-import { NavLink, Outlet } from "react-router";
+import { useEffect, useRef } from "react";
+import { NavLink, Outlet, useLocation } from "react-router";
 import {
 	SessionClockProvider,
 	useSessionClock,
 } from "../../clock/SessionClockProvider.tsx";
 import { SyntheticBadge } from "./SyntheticBadge";
 import { TransportBar } from "./TransportBar";
+import { SCENES } from "../../scenes/index.ts";
 
 const NAV = [
 	{ to: "/", label: "00" },
@@ -32,13 +34,39 @@ export function ConsoleShell() {
 
 function ShellChrome() {
 	const clock = useSessionClock();
+	const location = useLocation();
+	const mainRef = useRef<HTMLElement | null>(null);
+	const navRef = useRef<HTMLElement | null>(null);
+	const previousPath = useRef(location.pathname);
+
+	useEffect(() => {
+		const slug = location.pathname.replace(/^\/+|\/+$/g, "");
+		const sceneTitle = SCENES[slug]?.title ?? "Scene not found";
+		document.title = `${sceneTitle} — Anatomy of an AI Operator OS`;
+		const currentLink = navRef.current?.querySelector<HTMLElement>(
+			'[aria-current="page"]',
+		);
+		if (currentLink && navRef.current) {
+			navRef.current.scrollLeft = Math.max(0, currentLink.offsetLeft - 16);
+		}
+
+		if (previousPath.current !== location.pathname) {
+			const main = mainRef.current;
+			if (main) {
+				main.scrollTop = 0;
+				main.scrollLeft = 0;
+				main.querySelector<HTMLElement>("[data-scene-heading]")?.focus();
+			}
+		}
+		previousPath.current = location.pathname;
+	}, [location.pathname]);
 
 	return (
 		<div className="flex h-full flex-col bg-deck text-ink-deck">
 			<header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-deck-line px-4 py-3 sm:px-6">
 				<NavLink
 					to="/"
-					className="inline-flex min-h-11 select-none items-center font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted sm:min-h-0"
+					className="inline-flex min-h-11 select-none items-center font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted sm:min-h-6"
 				>
 					{/* One span so the label stays a single flex item (flex would
 					    otherwise swallow the whitespace between text and span). */}
@@ -48,8 +76,9 @@ function ShellChrome() {
 				</NavLink>
 
 				<nav
+					ref={navRef}
 					aria-label="Scenes"
-					className="order-last flex w-full flex-wrap gap-x-4 gap-y-1 font-instrument text-[11px] uppercase tracking-[0.14em] md:order-none md:w-auto"
+					className="order-last flex w-full flex-nowrap gap-x-4 overflow-x-auto font-instrument text-[11px] uppercase tracking-[0.14em] md:order-none md:w-auto md:overflow-visible"
 				>
 					{NAV.map(({ to, label }) => (
 						<NavLink
@@ -57,7 +86,7 @@ function ShellChrome() {
 							to={to}
 							end={to === "/"}
 							className={({ isActive }) =>
-								`inline-flex min-h-11 min-w-11 items-center justify-center sm:min-h-0 sm:min-w-0 ${
+								`inline-flex min-h-11 min-w-11 items-center justify-center sm:min-h-6 sm:min-w-6 ${
 									isActive
 										? "text-accent-deck"
 										: "text-ink-deck-muted hover:text-ink-deck"
@@ -75,7 +104,7 @@ function ShellChrome() {
 						onClick={() => clock.setMotionOverride(!clock.reducedMotion)}
 						aria-pressed={clock.reducedMotion}
 						title="Reduced motion: transitions cut instead of glide, ambient motion off, nothing autoplays. The scrubber keeps working."
-						className="min-h-11 font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted hover:text-ink-deck sm:min-h-0"
+						className="min-h-11 font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted hover:text-ink-deck sm:min-h-6"
 					>
 						Motion{" "}
 						<span className={clock.reducedMotion ? "text-accent-deck" : ""}>
@@ -86,7 +115,7 @@ function ShellChrome() {
 				</div>
 			</header>
 
-			<main className="min-h-0 flex-1 overflow-auto">
+			<main ref={mainRef} className="min-h-0 flex-1 overflow-auto">
 				<Outlet />
 			</main>
 

@@ -8,10 +8,18 @@ export default defineConfig({
 		// NON-NEGOTIABLE: source maps bake absolute build-machine paths into
 		// shipped artifacts (SPEC 3.3 mechanism 5).
 		sourcemap: false,
+		rolldownOptions: {
+			output: {
+				codeSplitting: {
+					groups: [{ name: "vendor", test: /node_modules/ }],
+				},
+			},
+		},
 	},
 	test: {
 		environment: "jsdom",
 		globals: true,
+		include: ["src/**/*.test.{ts,tsx}", "scripts/**/*.test.ts"],
 		setupFiles: ["./src/test/setup.ts"],
 	},
 });

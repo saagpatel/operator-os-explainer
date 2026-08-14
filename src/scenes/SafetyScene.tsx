@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 import { useSessionClock } from "../clock/SessionClockProvider.tsx";
 import { useAutoSeek } from "../clock/useAutoSeek.ts";
@@ -64,12 +64,20 @@ export function SafetyScene() {
 
 	// ?rule= deep-links a pre-selected trigger (shareable state, mirrors ?chips=)
 	const [params] = useSearchParams();
-	const [selectedRule, setSelectedRule] = useState<RuleConcept | null>(() => {
-		const q = params.get("rule");
-		return q !== null && (RULE_CONCEPTS as readonly string[]).includes(q)
-			? (q as RuleConcept)
+	const rawRule = params.get("rule");
+	const queryRule =
+		rawRule !== null && (RULE_CONCEPTS as readonly string[]).includes(rawRule)
+			? (rawRule as RuleConcept)
 			: null;
+	const appliedRule = useRef(rawRule);
+	const [selectedRule, setSelectedRule] = useState<RuleConcept | null>(() => {
+		return queryRule;
 	});
+	useEffect(() => {
+		if (appliedRule.current === rawRule) return;
+		appliedRule.current = rawRule;
+		setSelectedRule(queryRule);
+	}, [queryRule, rawRule]);
 
 	const events = useMemo(
 		() =>
@@ -116,7 +124,11 @@ export function SafetyScene() {
 						<p className="mb-2 font-instrument text-[10px] uppercase tracking-[0.2em] text-ink-deck-muted">
 							Trigger a would-be-dangerous action (all fabricated)
 						</p>
-						<div className="flex flex-wrap gap-2">
+							<div
+								role="group"
+								aria-label="Risky action demonstrations"
+								className="flex flex-wrap gap-2"
+							>
 							{RULE_CONCEPTS.map((rule) => (
 								<button
 									key={rule}
