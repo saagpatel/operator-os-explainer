@@ -48,7 +48,7 @@ export function FinaleScene() {
 			clock.pause();
 			setMissionRunning(false);
 		}
-	}, [clock, clock.t, missionRunning]);
+	}, [clock.pause, clock.t, missionRunning]);
 
 	const events = useMemo(
 		() => clock.missionEvents(1, Math.min(clock.t, MISSION_END)),

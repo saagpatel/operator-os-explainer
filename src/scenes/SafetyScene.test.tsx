@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { describe, expect, it } from "vitest";
@@ -15,7 +15,7 @@ const RULE_LABEL: Record<string, string> = {
 	"unverified-complete": "call work done without verifying",
 };
 
-function renderSafety() {
+function renderSafety(path = "/safety") {
 	const router = createMemoryRouter(
 		[
 			{
@@ -27,9 +27,9 @@ function renderSafety() {
 				),
 			},
 		],
-		{ initialEntries: ["/safety"] },
+		{ initialEntries: [path] },
 	);
-	return render(<RouterProvider router={router} />);
+	return { router, ...render(<RouterProvider router={router} />) };
 }
 
 describe("SafetyScene guard triggers", () => {
@@ -73,5 +73,23 @@ describe("SafetyScene guard triggers", () => {
 		expect(screen.getByTestId("guard-outcome").textContent).toContain(
 			"menu-derived demonstration",
 		);
+	});
+
+	it("reconciles the selected rule during same-route history navigation", async () => {
+		const { router } = renderSafety("/safety?rule=push-to-main");
+		expect(
+			screen.getByRole("button", { name: RULE_LABEL["push-to-main"] }),
+		).toHaveAttribute("aria-pressed", "true");
+
+		await act(async () => router.navigate("/safety?rule=credential-read"));
+
+		await waitFor(() =>
+			expect(
+				screen.getByRole("button", { name: RULE_LABEL["credential-read"] }),
+			).toHaveAttribute("aria-pressed", "true"),
+		);
+		expect(
+			screen.getByRole("button", { name: RULE_LABEL["push-to-main"] }),
+		).toHaveAttribute("aria-pressed", "false");
 	});
 });

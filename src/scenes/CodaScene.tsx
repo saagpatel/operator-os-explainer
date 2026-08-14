@@ -97,7 +97,7 @@ export function CodaScene() {
 					<div className="mt-4 flex justify-center">
 						<Link
 							to="/"
-							className="inline-flex min-h-11 items-center px-3 font-instrument text-[11px] uppercase tracking-[0.16em] text-ink-deck-muted hover:text-accent-deck sm:min-h-0"
+								className="inline-flex min-h-11 items-center px-3 font-instrument text-[11px] uppercase tracking-[0.16em] text-ink-deck-muted hover:text-accent-deck sm:min-h-6"
 						>
 							Replay from the opening
 						</Link>

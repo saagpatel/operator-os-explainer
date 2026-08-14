@@ -132,7 +132,7 @@ export function SpineScene() {
 
 					<div className="rounded-sm border border-deck-line p-3">
 						<p className="mb-2 font-instrument text-[10px] uppercase tracking-[0.2em] text-ink-deck-muted">
-							Bridge feed · live
+							Bridge feed · synthetic replay
 						</p>
 						<BridgeFeed
 							events={events}
