@@ -33,6 +33,7 @@ describe("SpineScene handoff run", () => {
 			"false",
 		);
 		expect(screen.getByText(/feed empty/i)).toBeInTheDocument();
+		expect(screen.getByText(/bridge feed · synthetic replay/i)).toBeInTheDocument();
 	});
 
 	it("steps through all five stages, driving the clock and the feed", () => {

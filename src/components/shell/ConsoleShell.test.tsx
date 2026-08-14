@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { describe, expect, it } from "vitest";
@@ -20,7 +20,7 @@ function renderShell(initialPath = "/coda") {
 		],
 		{ initialEntries: [initialPath] },
 	);
-	return render(<RouterProvider router={router} />);
+	return { router, ...render(<RouterProvider router={router} />) };
 }
 
 describe("ConsoleShell", () => {
@@ -47,5 +47,18 @@ describe("ConsoleShell", () => {
 			name: "Session clock scrubber",
 		});
 		expect(scrub).toHaveAttribute("max", "90000");
+	});
+
+	it("updates route identity and focuses the new scene heading", async () => {
+		const { router } = renderShell();
+		await waitFor(() =>
+			expect(document.title).toBe("Coda — Anatomy of an AI Operator OS"),
+		);
+
+		await act(async () => router.navigate("/fleet"));
+
+		const heading = await screen.findByRole("heading", { name: "The Fleet" });
+		expect(document.title).toBe("The Fleet — Anatomy of an AI Operator OS");
+		expect(heading).toHaveFocus();
 	});
 });
