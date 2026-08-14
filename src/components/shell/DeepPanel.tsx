@@ -17,6 +17,7 @@ export function DeepPanel({
 }) {
 	const [open, setOpen] = useState(false);
 	const regionId = useId();
+	const labelId = useId();
 
 	return (
 		<div className="mt-8 border-t border-deck-line pt-1">
@@ -27,7 +28,7 @@ export function DeepPanel({
 				aria-controls={regionId}
 				className="flex min-h-11 w-full items-center justify-between py-3 font-instrument text-[11px] uppercase tracking-[0.2em] text-ink-deck-muted hover:text-ink-deck"
 			>
-				<span>
+				<span id={labelId}>
 					Go deeper <span className="text-accent-deck">·</span> {title}
 				</span>
 				<span aria-hidden="true">{open ? "−" : "+"}</span>
@@ -35,6 +36,8 @@ export function DeepPanel({
 			{open ? (
 				<div
 					id={regionId}
+					role="region"
+					aria-labelledby={labelId}
 					className="grid gap-6 pb-6 pt-1 lg:grid-cols-[minmax(0,42ch)_1fr]"
 				>
 					<p className="font-prose text-[15px] leading-relaxed text-ink-deck">

@@ -50,6 +50,16 @@ function mkDispatch(taskClass: TaskClass, at: number, idx: number): Dispatch {
 	};
 }
 
+function presetDispatches(rawChips: string): Dispatch[] {
+	const valid = rawChips
+		.split(",")
+		.filter((chip): chip is TaskClass =>
+			(TASK_CLASSES as readonly string[]).includes(chip),
+		);
+	return [...new Set(valid)]
+		.map((taskClass, index) => mkDispatch(taskClass, 0, index));
+}
+
 /**
  * Scene 1, the reference scene: routing by gravity. The reader releases a
  * task chip anywhere; the chip flies to the system that OWNS it, because
@@ -68,18 +78,21 @@ export function FleetScene() {
 		if (autoplayed.current || clock.reducedMotion) return;
 		autoplayed.current = true;
 		clock.play();
-	}, [clock]);
+	}, [clock.play, clock.reducedMotion]);
 
 	const [params] = useSearchParams();
-	const [injected, setInjected] = useState<Dispatch[]>(() => {
-		const preset = (params.get("chips") ?? "")
-			.split(",")
-			.filter((c): c is TaskClass =>
-				(TASK_CLASSES as readonly string[]).includes(c),
-			);
-		return preset.map((tc, i) => mkDispatch(tc, 0, i));
-	});
+	const rawChips = params.get("chips") ?? "";
+	const appliedChips = useRef(rawChips);
+	const [injected, setInjected] = useState<Dispatch[]>(() =>
+		presetDispatches(rawChips),
+	);
 	const [selected, setSelected] = useState<TaskClass | null>(null);
+	useEffect(() => {
+		if (appliedChips.current === rawChips) return;
+		appliedChips.current = rawChips;
+		setInjected(presetDispatches(rawChips));
+		setSelected(null);
+	}, [rawChips]);
 
 	const route = (taskClass: TaskClass) => {
 		setSelected(taskClass);

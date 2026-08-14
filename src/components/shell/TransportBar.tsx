@@ -32,7 +32,7 @@ export function TransportBar({
 	onStepForward,
 }: TransportBarProps) {
 	return (
-		<div className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-deck-line bg-deck-raised px-4 py-2.5 sm:flex-nowrap sm:gap-y-0 sm:px-6">
+		<div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-t border-deck-line bg-deck-raised px-4 py-2.5 sm:flex-nowrap sm:gap-x-4 sm:gap-y-0 sm:px-6">
 			<div className="flex items-center gap-1">
 				<button
 					type="button"
@@ -92,7 +92,7 @@ export function TransportBar({
 						type="button"
 						onClick={() => onSpeedChange(s)}
 						aria-pressed={speed === s}
-						className={`flex h-11 w-11 items-center justify-center rounded-sm font-instrument text-[10px] sm:h-auto sm:w-auto sm:px-1.5 sm:py-1 ${
+							className={`flex h-11 w-11 items-center justify-center rounded-sm font-instrument text-[10px] sm:min-h-6 sm:w-auto sm:px-1.5 sm:py-1 ${
 							speed === s
 								? "text-accent-deck"
 								: "text-ink-deck-muted hover:text-ink-deck"

@@ -33,7 +33,11 @@ export function SceneFrame({
 				</p>
 				{/* Fluid below `sm` so a long title breathes at 320 and still reads as
 				    the deck's display voice; `sm:` and up is the desktop size. */}
-				<h1 className="mt-1 break-words font-display text-[clamp(1.75rem,7vw,2.25rem)] text-ink-deck sm:text-5xl">
+				<h1
+					tabIndex={-1}
+					data-scene-heading
+					className="mt-1 break-words font-display text-[clamp(1.75rem,7vw,2.25rem)] text-ink-deck sm:text-5xl"
+				>
 					{config.title}
 				</h1>
 			</header>

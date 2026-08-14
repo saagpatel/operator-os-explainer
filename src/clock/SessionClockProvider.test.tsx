@@ -42,9 +42,12 @@ function Probe() {
 			<div data-testid="custom-control" role="slider" tabIndex={0}>
 				<span data-testid="custom-control-child">custom control child</span>
 			</div>
-			<div>
-				<span data-testid="non-interactive-child">page content</span>
-			</div>
+				<div>
+					<span data-testid="non-interactive-child">page content</span>
+				</div>
+				<h1 data-testid="route-heading" tabIndex={-1}>
+					Route heading
+				</h1>
 		</div>
 	);
 }
@@ -181,4 +184,16 @@ describe("SessionClockProvider", () => {
 			expect(screen.getByTestId("playing").textContent).toBe(expectedPlaying);
 		},
 	);
+
+	it("keeps transport shortcuts global on a programmatically focused route heading", () => {
+		renderProbe();
+		const heading = screen.getByTestId("route-heading");
+		heading.focus();
+		expect(document.activeElement).toBe(heading);
+
+		const event = dispatchCancelableKeyDown(heading, "End");
+
+		expect(event.defaultPrevented).toBe(true);
+		expect(screen.getByTestId("t").textContent).toBe("90000");
+	});
 });

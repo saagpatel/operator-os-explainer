@@ -70,7 +70,7 @@ const INTERACTIVE_SHORTCUT_TARGET_SELECTOR = [
 	"audio[controls]",
 	"video[controls]",
 	'[contenteditable]:not([contenteditable="false"])',
-	"[tabindex]",
+	'[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
 export function isInteractiveShortcutTarget(target: EventTarget | null): boolean {
