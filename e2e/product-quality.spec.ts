@@ -35,6 +35,17 @@ async function openStable(page: Page, route: string) {
 }
 
 test.describe("route identity and semantics", () => {
+	test("the declared favicon is available without a console-visible 404", async ({
+		page,
+	}) => {
+		await openStable(page, "/");
+		const iconHref = await page.locator("link[rel='icon']").getAttribute("href");
+		expect(iconHref).toBe("/favicon.svg");
+		const response = await page.request.get(iconHref!);
+		expect(response.status()).toBe(200);
+		expect(response.headers()["content-type"]).toContain("image/svg+xml");
+	});
+
 	for (const route of routes) {
 		test(`${route.slug} has a named scene and route-specific title`, async ({
 			page,
