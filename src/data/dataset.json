@@ -1,0 +1,657 @@
+{
+	"meta": {
+		"seed": 266838307,
+		"version": "1.0.0",
+		"sessionLengthMs": 90000,
+		"heroMissionId": 1,
+		"synthetic": true
+	},
+	"activity": [
+		{
+			"id": 201,
+			"source": "cc",
+			"timestamp": "2026-03-16T00:00:03Z",
+			"projectName": "Corveth",
+			"summary": "scaffolded the export pipeline",
+			"branch": "feat/corveth",
+			"tags": [],
+			"sourceTrust": "operator",
+			"missionId": 1
+		},
+		{
+			"id": 202,
+			"source": "cc",
+			"timestamp": "2026-03-16T00:00:17Z",
+			"projectName": "Corveth",
+			"summary": "shipped the export pipeline",
+			"branch": "feat/corveth",
+			"tags": [
+				"SHIPPED"
+			],
+			"sourceTrust": "agent",
+			"missionId": 1
+		},
+		{
+			"id": 203,
+			"source": "codex",
+			"timestamp": "2026-03-16T00:00:06Z",
+			"projectName": "Elstra",
+			"summary": "deduplicated the config loader",
+			"branch": null,
+			"tags": [],
+			"sourceTrust": "agent",
+			"missionId": 2
+		},
+		{
+			"id": 204,
+			"source": "codex",
+			"timestamp": "2026-03-16T00:00:22Z",
+			"projectName": "Elstra",
+			"summary": "pruned the cache layer",
+			"branch": null,
+			"tags": [],
+			"sourceTrust": "agent",
+			"missionId": 2
+		},
+		{
+			"id": 205,
+			"source": "claude_ai",
+			"timestamp": "2026-03-16T00:00:31Z",
+			"projectName": "Grevan",
+			"summary": "wired the replay engine",
+			"branch": null,
+			"tags": [
+				"LEDGER"
+			],
+			"sourceTrust": "operator",
+			"missionId": 4
+		},
+		{
+			"id": 206,
+			"source": "cc",
+			"timestamp": "2026-03-16T00:01:01Z",
+			"projectName": "Halvane",
+			"summary": "audited the sync guard",
+			"branch": null,
+			"tags": [],
+			"sourceTrust": "agent",
+			"missionId": 5
+		},
+		{
+			"id": 207,
+			"source": "personal_ops",
+			"timestamp": "2026-03-16T00:00:45Z",
+			"projectName": "Jorvel",
+			"summary": "hardened the token gate",
+			"branch": null,
+			"tags": [],
+			"sourceTrust": "agent",
+			"missionId": null
+		},
+		{
+			"id": 208,
+			"source": "notion_os",
+			"timestamp": "2026-03-16T00:00:55Z",
+			"projectName": "Kestrine",
+			"summary": "reconciled the cost ledger",
+			"branch": null,
+			"tags": [
+				"LEDGER"
+			],
+			"sourceTrust": "ingested",
+			"missionId": null
+		}
+	],
+	"handoffs": [
+		{
+			"id": 1,
+			"projectName": "Corveth",
+			"projectPath": "~/workspace/corveth",
+			"roadmapFile": "PLAN.md",
+			"phase": "implement",
+			"dispatchedFrom": "claude_ai",
+			"dispatchedAt": "2026-03-16T00:00:01Z",
+			"pickedUpAt": "2026-03-16T00:00:03Z",
+			"clearedAt": "2026-03-16T00:00:19Z",
+			"status": "cleared",
+			"claimedBy": "cc",
+			"sourceTrust": "operator"
+		},
+		{
+			"id": 2,
+			"projectName": "Faltrin",
+			"projectPath": "~/workspace/faltrin",
+			"roadmapFile": null,
+			"phase": "scope",
+			"dispatchedFrom": "claude_ai",
+			"dispatchedAt": "2026-03-16T00:00:25Z",
+			"pickedUpAt": "2026-03-16T00:00:26Z",
+			"clearedAt": null,
+			"status": "active",
+			"claimedBy": "codex",
+			"sourceTrust": "agent"
+		}
+	],
+	"snapshots": [
+		{
+			"id": 1,
+			"system": "cc",
+			"snapshotDate": "2026-03-16",
+			"data": {
+				"activeProjects": [
+					"Corveth",
+					"Elstra"
+				],
+				"lessons": [
+					"guards fire, agent adapts",
+					"verify on bytes, not on exit code"
+				],
+				"patterns": [
+					"branch-as-lease",
+					"deterministic seed"
+				]
+			},
+			"createdAt": "2026-03-16T00:00:03Z",
+			"sourceTrust": "agent"
+		},
+		{
+			"id": 2,
+			"system": "codex",
+			"snapshotDate": "2026-03-16",
+			"data": {
+				"activeProjects": [
+					"Elstra",
+					"Faltrin"
+				],
+				"lessons": [
+					"one scoped task per lane"
+				],
+				"patterns": [
+					"pipeline over barrier"
+				]
+			},
+			"createdAt": "2026-03-16T00:00:26Z",
+			"sourceTrust": "agent"
+		}
+	],
+	"costRecords": [
+		{
+			"id": 1,
+			"system": "cc",
+			"month": "2026-03",
+			"amount": 12.4,
+			"notes": null
+		},
+		{
+			"id": 2,
+			"system": "codex",
+			"month": "2026-03",
+			"amount": 3.1,
+			"notes": "sweeps"
+		},
+		{
+			"id": 3,
+			"system": "personal_ops",
+			"month": "2026-03",
+			"amount": 0.9,
+			"notes": null
+		}
+	],
+	"sessionCosts": [
+		{
+			"sessionId": "sc-1",
+			"projectName": "Corveth",
+			"startedAt": "2026-03-16T00:00:00Z",
+			"costUsd": 0.27,
+			"modelBreakdown": {
+				"Sonnet": 0.26,
+				"mechanical": 0.01
+			},
+			"source": "cc",
+			"missionId": 1
+		},
+		{
+			"sessionId": "sc-2",
+			"projectName": "Elstra",
+			"startedAt": "2026-03-16T00:00:05Z",
+			"costUsd": 0.02,
+			"modelBreakdown": {
+				"mechanical": 0.02
+			},
+			"source": "codex",
+			"missionId": 2
+		}
+	],
+	"sections": [
+		{
+			"sectionName": "career",
+			"owner": "claude_ai",
+			"content": "Synthetic career section body.",
+			"updatedAt": "2026-03-16T00:00:31Z",
+			"version": 3
+		},
+		{
+			"sectionName": "capabilities",
+			"owner": "claude_ai",
+			"content": "Synthetic capabilities section body.",
+			"updatedAt": "2026-03-16T00:00:31Z",
+			"version": 2
+		},
+		{
+			"sectionName": "research",
+			"owner": "claude_ai",
+			"content": "Synthetic research section body.",
+			"updatedAt": "2026-03-16T00:00:31Z",
+			"version": 5
+		},
+		{
+			"sectionName": "speaking",
+			"owner": "claude_ai",
+			"content": "Synthetic speaking section body.",
+			"updatedAt": "2026-03-16T00:00:31Z",
+			"version": 1
+		},
+		{
+			"sectionName": "portfolio",
+			"owner": "cc",
+			"content": "Synthetic portfolio section body.",
+			"updatedAt": "2026-03-16T00:01:01Z",
+			"version": 7
+		}
+	],
+	"events": [
+		{
+			"kind": "dispatch",
+			"id": 1,
+			"at": 800,
+			"missionId": 1,
+			"from": "claude_ai",
+			"to": "cc",
+			"taskClass": "feature",
+			"model": "Opus",
+			"durationMs": 1200,
+			"status": "ok"
+		},
+		{
+			"kind": "handoff",
+			"id": 2,
+			"at": 1500,
+			"missionId": 1,
+			"handoffId": 1,
+			"stage": "dispatch"
+		},
+		{
+			"kind": "handoff",
+			"id": 3,
+			"at": 2200,
+			"missionId": 1,
+			"handoffId": 1,
+			"stage": "snapshot"
+		},
+		{
+			"kind": "handoff",
+			"id": 4,
+			"at": 3000,
+			"missionId": 1,
+			"handoffId": 1,
+			"stage": "pickup"
+		},
+		{
+			"kind": "activity",
+			"id": 5,
+			"at": 3500,
+			"missionId": 1,
+			"activityId": 201
+		},
+		{
+			"kind": "cost",
+			"id": 6,
+			"at": 4500,
+			"missionId": 1,
+			"sessionCostId": "sc-1",
+			"model": "Sonnet",
+			"deltaUsd": 0.03
+		},
+		{
+			"kind": "dispatch",
+			"id": 7,
+			"at": 5000,
+			"missionId": 2,
+			"from": "claude_ai",
+			"to": "codex",
+			"taskClass": "sweep",
+			"model": "mechanical",
+			"durationMs": 800,
+			"status": "ok"
+		},
+		{
+			"kind": "activity",
+			"id": 8,
+			"at": 6000,
+			"missionId": 2,
+			"activityId": 203
+		},
+		{
+			"kind": "cost",
+			"id": 9,
+			"at": 6500,
+			"missionId": 2,
+			"sessionCostId": "sc-2",
+			"model": "mechanical",
+			"deltaUsd": 0.02
+		},
+		{
+			"kind": "fanout",
+			"id": 10,
+			"at": 8000,
+			"missionId": 1,
+			"lane": 0,
+			"worktree": "wt/corveth-0",
+			"model": "Sonnet",
+			"phase": "spawn"
+		},
+		{
+			"kind": "fanout",
+			"id": 11,
+			"at": 8000,
+			"missionId": 1,
+			"lane": 1,
+			"worktree": "wt/corveth-1",
+			"model": "Sonnet",
+			"phase": "spawn"
+		},
+		{
+			"kind": "fanout",
+			"id": 12,
+			"at": 8200,
+			"missionId": 1,
+			"lane": 2,
+			"worktree": "wt/corveth-2",
+			"model": "mechanical",
+			"phase": "spawn"
+		},
+		{
+			"kind": "freshness",
+			"id": 13,
+			"at": 10000,
+			"spoke": "bridge",
+			"state": "fresh"
+		},
+		{
+			"kind": "fanout",
+			"id": 14,
+			"at": 10000,
+			"missionId": 1,
+			"lane": 0,
+			"worktree": "wt/corveth-0",
+			"model": "Sonnet",
+			"phase": "run"
+		},
+		{
+			"kind": "fanout",
+			"id": 15,
+			"at": 10000,
+			"missionId": 1,
+			"lane": 1,
+			"worktree": "wt/corveth-1",
+			"model": "Sonnet",
+			"phase": "run"
+		},
+		{
+			"kind": "fanout",
+			"id": 16,
+			"at": 10200,
+			"missionId": 1,
+			"lane": 2,
+			"worktree": "wt/corveth-2",
+			"model": "mechanical",
+			"phase": "run"
+		},
+		{
+			"kind": "guard",
+			"id": 17,
+			"at": 11000,
+			"missionId": 1,
+			"layer": "hard-deny",
+			"ruleConcept": "push-to-main",
+			"outcome": "blocked",
+			"adaptation": "opened-a-branch"
+		},
+		{
+			"kind": "cost",
+			"id": 18,
+			"at": 11500,
+			"missionId": 1,
+			"sessionCostId": "sc-1",
+			"model": "Sonnet",
+			"deltaUsd": 0.14
+		},
+		{
+			"kind": "cost",
+			"id": 19,
+			"at": 12000,
+			"missionId": 1,
+			"sessionCostId": "sc-1",
+			"model": "mechanical",
+			"deltaUsd": 0.01
+		},
+		{
+			"kind": "fanout",
+			"id": 20,
+			"at": 14000,
+			"missionId": 1,
+			"lane": 0,
+			"worktree": "wt/corveth-0",
+			"model": "Sonnet",
+			"phase": "converge"
+		},
+		{
+			"kind": "fanout",
+			"id": 21,
+			"at": 14000,
+			"missionId": 1,
+			"lane": 1,
+			"worktree": "wt/corveth-1",
+			"model": "Sonnet",
+			"phase": "converge"
+		},
+		{
+			"kind": "fanout",
+			"id": 22,
+			"at": 14200,
+			"missionId": 1,
+			"lane": 2,
+			"worktree": "wt/corveth-2",
+			"model": "mechanical",
+			"phase": "converge"
+		},
+		{
+			"kind": "verify",
+			"id": 23,
+			"at": 15000,
+			"missionId": 1,
+			"attempt": 1,
+			"result": "block"
+		},
+		{
+			"kind": "cost",
+			"id": 24,
+			"at": 15500,
+			"missionId": 1,
+			"sessionCostId": "sc-1",
+			"model": "Sonnet",
+			"deltaUsd": 0.09
+		},
+		{
+			"kind": "verify",
+			"id": 25,
+			"at": 17000,
+			"missionId": 1,
+			"attempt": 2,
+			"result": "pass"
+		},
+		{
+			"kind": "activity",
+			"id": 26,
+			"at": 17400,
+			"missionId": 1,
+			"activityId": 202
+		},
+		{
+			"kind": "ship",
+			"id": 27,
+			"at": 18000,
+			"missionId": 1,
+			"activityId": 202,
+			"downstreamSystem": "notion",
+			"downstreamRef": "buildlog/corveth"
+		},
+		{
+			"kind": "handoff",
+			"id": 28,
+			"at": 18500,
+			"missionId": 1,
+			"handoffId": 1,
+			"stage": "receipt"
+		},
+		{
+			"kind": "handoff",
+			"id": 29,
+			"at": 19000,
+			"missionId": 1,
+			"handoffId": 1,
+			"stage": "clear"
+		},
+		{
+			"kind": "freshness",
+			"id": 30,
+			"at": 20000,
+			"spoke": "event-bus",
+			"state": "fresh"
+		},
+		{
+			"kind": "activity",
+			"id": 31,
+			"at": 22000,
+			"missionId": 2,
+			"activityId": 204
+		},
+		{
+			"kind": "handoff",
+			"id": 32,
+			"at": 25000,
+			"missionId": 3,
+			"handoffId": 2,
+			"stage": "dispatch"
+		},
+		{
+			"kind": "handoff",
+			"id": 33,
+			"at": 26000,
+			"missionId": 3,
+			"handoffId": 2,
+			"stage": "pickup"
+		},
+		{
+			"kind": "dispatch",
+			"id": 34,
+			"at": 30000,
+			"missionId": 4,
+			"from": "claude_ai",
+			"to": "claude_ai",
+			"taskClass": "essay",
+			"model": "Opus",
+			"durationMs": 2000,
+			"status": "ok"
+		},
+		{
+			"kind": "activity",
+			"id": 35,
+			"at": 31000,
+			"missionId": 4,
+			"activityId": 205
+		},
+		{
+			"kind": "freshness",
+			"id": 36,
+			"at": 35000,
+			"spoke": "auditor",
+			"state": "aging"
+		},
+		{
+			"kind": "hubflow",
+			"id": 37,
+			"at": 40000,
+			"stage": "draft",
+			"artifactId": "draft-71"
+		},
+		{
+			"kind": "hubflow",
+			"id": 38,
+			"at": 42000,
+			"stage": "approval",
+			"artifactId": "draft-71"
+		},
+		{
+			"kind": "hubflow",
+			"id": 39,
+			"at": 44000,
+			"stage": "send",
+			"artifactId": "draft-71"
+		},
+		{
+			"kind": "activity",
+			"id": 40,
+			"at": 45000,
+			"missionId": null,
+			"activityId": 207
+		},
+		{
+			"kind": "freshness",
+			"id": 41,
+			"at": 50000,
+			"spoke": "overlay",
+			"state": "stale"
+		},
+		{
+			"kind": "activity",
+			"id": 42,
+			"at": 55000,
+			"missionId": null,
+			"activityId": 208
+		},
+		{
+			"kind": "dispatch",
+			"id": 43,
+			"at": 60000,
+			"missionId": 5,
+			"from": "cc",
+			"to": "autonomous",
+			"taskClass": "audit",
+			"model": "Haiku",
+			"durationMs": 500,
+			"status": "ok"
+		},
+		{
+			"kind": "activity",
+			"id": 44,
+			"at": 61000,
+			"missionId": 5,
+			"activityId": 206
+		},
+		{
+			"kind": "freshness",
+			"id": 45,
+			"at": 65000,
+			"spoke": "evals-ledger",
+			"state": "fresh"
+		},
+		{
+			"kind": "freshness",
+			"id": 46,
+			"at": 70000,
+			"spoke": "auditor",
+			"state": "fresh"
+		}
+	]
+}

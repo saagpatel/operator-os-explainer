@@ -1,0 +1,131 @@
+{
+	"schema": "PublicArchitectureManifestV1",
+	"as_of": "2026-08-05",
+	"public_safe": true,
+	"claim_policy": {
+		"public_source_verified": "Evidence points to public source pinned to an immutable Git commit.",
+		"private_source_verified": "Evidence was checked against private operator-controlled source; public readers cannot independently inspect it.",
+		"operator_attested": "The claim describes operator practice and is an attestation, not independently verifiable public-source evidence.",
+		"explainer_local_verified": "Evidence is in this public explainer source pinned to an immutable Git commit."
+	},
+	"sources": [
+		{
+			"id": "bridge-db-public-source",
+			"title": "BridgeDB public source",
+			"visibility": "public",
+			"repository_url": "https://github.com/saagpatel/bridge-db",
+			"revision": "e0a956010e774f476d7ba59a0dcd1d7f8bd38a0a"
+		},
+		{
+			"id": "explainer-public-source",
+			"title": "Operator OS explainer public source",
+			"visibility": "public",
+			"repository_url": "https://github.com/saagpatel/operator-os-explainer",
+			"revision": "b4cb437717b83e8f004a47f62c47d73e3d7e9b16"
+		},
+		{
+			"id": "operator-control-plane-private-source",
+			"title": "Operator control-plane source",
+			"visibility": "private",
+			"repository_url": null,
+			"revision": null
+		},
+		{
+			"id": "operator-practice-attestation",
+			"title": "Operator practice attestation",
+			"visibility": "operator_attestation",
+			"repository_url": null,
+			"revision": null
+		}
+	],
+	"claims": [
+		{
+			"id": "approval-airlock",
+			"summary": "Outbound control-plane actions pass through durable draft, approval, one-use confirmation, and bounded execution states.",
+			"assurance": "private_source_verified",
+			"evidence": [
+				{
+					"source_id": "operator-control-plane-private-source",
+					"locator": "approval state machine and confirmation-token boundary"
+				}
+			]
+		},
+		{
+			"id": "bridge-sqlite-spine",
+			"summary": "A SQLite-backed bridge carries activity, handoff, snapshot, cost, and long-lived context records with searchable recall and protected lifecycle tags.",
+			"assurance": "public_source_verified",
+			"evidence": [
+				{
+					"source_id": "bridge-db-public-source",
+					"locator": "README.md sections Architecture, Tools, Trust, and Retention"
+				}
+			]
+		},
+		{
+			"id": "deterministic-synthetic-replay",
+			"summary": "The explainer replays one committed deterministic synthetic dataset on a shared session clock with no live data wiring.",
+			"assurance": "explainer_local_verified",
+			"evidence": [
+				{
+					"source_id": "explainer-public-source",
+					"locator": "src/data/generate.ts; src/data/closure.test.ts; src/clock/SessionClockProvider.tsx"
+				}
+			]
+		},
+		{
+			"id": "freshness-gated-alerts",
+			"summary": "Control-plane read adapters classify evidence freshness and allow alerting only from fresh inputs.",
+			"assurance": "private_source_verified",
+			"evidence": [
+				{
+					"source_id": "operator-control-plane-private-source",
+					"locator": "spoke freshness policy and alert eligibility boundary"
+				}
+			]
+		},
+		{
+			"id": "gravity-based-routing",
+			"summary": "Work is routed by task ownership and required capability, while model tiers are selected by the judgment and risk profile of the role.",
+			"assurance": "operator_attested",
+			"evidence": [
+				{
+					"source_id": "operator-practice-attestation",
+					"locator": "fleet routing and model-tier operating practice"
+				}
+			]
+		},
+		{
+			"id": "isolated-worktree-fanout",
+			"summary": "Parallel implementation lanes use isolated worktrees and converge through a parent-owned integration path with verification before publication.",
+			"assurance": "operator_attested",
+			"evidence": [
+				{
+					"source_id": "operator-practice-attestation",
+					"locator": "parallel delivery and integration operating practice"
+				}
+			]
+		},
+		{
+			"id": "layered-operation-guards",
+			"summary": "Consequential work is constrained by overlapping intent, pattern, policy, confidence, verification, and integrity gates.",
+			"assurance": "operator_attested",
+			"evidence": [
+				{
+					"source_id": "operator-practice-attestation",
+					"locator": "guarded execution operating practice"
+				}
+			]
+		},
+		{
+			"id": "public-release-closure",
+			"summary": "The public build is guarded by closed synthetic vocabularies, deterministic regeneration, forbidden-pattern scanning, and disabled source maps.",
+			"assurance": "explainer_local_verified",
+			"evidence": [
+				{
+					"source_id": "explainer-public-source",
+					"locator": "src/data/vocab.ts; src/data/closure.ts; scripts/guard-scan.ts; vite.config.ts"
+				}
+			]
+		}
+	]
+}

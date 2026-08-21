@@ -1,0 +1,70 @@
+name: CI
+
+# Both lineages are covered (see RELEASE.md). On the remote, `main` IS the
+# release lineage and `recovery/operator-os-explainer-main-20260719` is the
+# dev lineage; they share no merge base by design, so each is triggered by
+# name rather than by a shared base branch.
+on:
+  push:
+    branches:
+      - main
+      - recovery/operator-os-explainer-main-20260719
+      - 'chore/**'
+      - 'feat/**'
+      - 'fix/**'
+      - 'codex/**'
+      - 'agent/**'
+  pull_request:
+    branches:
+      - main
+      - recovery/operator-os-explainer-main-20260719
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Both arms of the declared engines range. 22.22 is the floor: the
+        # first release where `node script.ts` type-stripping is unflagged,
+        # which package.json's scripts depend on. Node 23 is excluded because
+        # vitest 4 and jsdom 29 exclude it.
+        node: ['22.22.0', '24.19.0']
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+        with:
+          version: 11.15.0
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      # The guard scans dist/ only when it is present, so the build must run
+      # first or the shipped artifact is never scanned. A stale dist is worse
+      # than none: it once produced a false RED from a pre-scrub build.
+      - run: pnpm build
+
+      - run: pnpm guard
+
+      # The generator is deterministic by contract; a drifted dataset.json
+      # means the committed artifact no longer matches its source.
+      - name: Verify dataset.json is regenerable byte-for-byte
+        run: |
+          pnpm generate
+          git diff --exit-code -- src/data/dataset.json
