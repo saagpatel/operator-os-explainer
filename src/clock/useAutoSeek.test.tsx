@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { describe, expect, it } from "vitest";
@@ -28,7 +28,7 @@ function renderProbe(initialEntry: string, tStart = 6_000) {
 		],
 		{ initialEntries: [initialEntry] },
 	);
-	return render(<RouterProvider router={router} />);
+	return { router, ...render(<RouterProvider router={router} />) };
 }
 
 describe("useAutoSeek", () => {
@@ -56,6 +56,19 @@ describe("useAutoSeek", () => {
 		renderProbe("/finale?t=800");
 		await waitFor(() =>
 			expect(screen.getByTestId("clock")).toHaveTextContent("800"),
+		);
+	});
+
+	it("reapplies a changed time parameter during same-route history navigation", async () => {
+		const { router } = renderProbe("/finale?t=800");
+		await waitFor(() =>
+			expect(screen.getByTestId("clock")).toHaveTextContent("800"),
+		);
+
+		await act(async () => router.navigate("/finale?t=1500"));
+
+		await waitFor(() =>
+			expect(screen.getByTestId("clock")).toHaveTextContent("1500"),
 		);
 	});
 });

@@ -7,7 +7,11 @@ export function NotFoundScene() {
 				<p className="font-instrument text-[11px] uppercase tracking-[0.22em] text-ink-deck-muted">
 					Scene unavailable
 				</p>
-				<h1 className="mt-2 font-display text-4xl text-ink-deck sm:text-5xl">
+					<h1
+						tabIndex={-1}
+						data-scene-heading
+						className="mt-2 font-display text-4xl text-ink-deck sm:text-5xl"
+					>
 					Scene not found
 				</h1>
 				<p className="mt-4 max-w-xl font-prose text-base leading-relaxed text-ink-deck-muted">

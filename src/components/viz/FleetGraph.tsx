@@ -483,8 +483,10 @@ export function FleetGraph({
 			{/* Overlaid on the wide canvas, where it sits in empty margin. On the
 			    compact canvas five log lines would cover the constellation, so it
 			    takes its own space below instead. */}
-			<div
-				aria-label="Dispatch log"
+				<div
+					role="log"
+					aria-label="Dispatch log"
+					aria-live="polite"
 				className={
 					compact
 						? "px-1 pt-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"

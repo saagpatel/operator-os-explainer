@@ -47,13 +47,13 @@ export function ColdOpenScene() {
 			setOpening(true);
 			clock.play();
 		}
-	}, [clock]);
+	}, [clock.play, clock.reducedMotion, clock.scrub]);
 	useEffect(() => {
 		if (opening && clock.t >= OPEN_END) {
 			clock.pause();
 			setOpening(false);
 		}
-	}, [clock, clock.t, opening]);
+	}, [clock.pause, clock.t, opening]);
 
 	const events = useMemo(
 		() => clock.missionEvents(1, Math.min(clock.t, OPEN_END)),

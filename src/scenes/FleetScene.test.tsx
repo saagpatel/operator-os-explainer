@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { createMemoryRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { describe, expect, it } from "vitest";
@@ -19,7 +19,7 @@ function renderFleet(path = "/fleet") {
 		],
 		{ initialEntries: [path] },
 	);
-	return render(<RouterProvider router={router} />);
+	return { router, ...render(<RouterProvider router={router} />) };
 }
 
 describe("FleetScene routing interaction", () => {
@@ -80,5 +80,23 @@ describe("FleetScene routing interaction", () => {
 		expect(screen.getByTestId("chip-docked-feature")).toBeInTheDocument();
 		expect(screen.getByTestId("chip-docked-sweep")).toBeInTheDocument();
 		expect(screen.queryByTestId("chip-docked-essay")).toBeNull();
+	});
+
+	it("drops invalid and duplicate deep-link chips", () => {
+		renderFleet("/fleet?chips=feature,not-real,feature");
+		expect(screen.getAllByTestId("chip-docked-feature")).toHaveLength(1);
+		expect(screen.queryByText("NOT-REAL")).toBeNull();
+	});
+
+	it("reconciles chips when same-route history changes the deep link", async () => {
+		const { router } = renderFleet("/fleet?chips=feature");
+		expect(screen.getByTestId("chip-docked-feature")).toBeInTheDocument();
+
+		await act(async () => router.navigate("/fleet?chips=audit"));
+
+		await waitFor(() =>
+			expect(screen.getByTestId("chip-docked-audit")).toBeInTheDocument(),
+		);
+		expect(screen.queryByTestId("chip-docked-feature")).toBeNull();
 	});
 });
