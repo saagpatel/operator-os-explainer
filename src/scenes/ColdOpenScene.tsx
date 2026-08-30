@@ -63,6 +63,60 @@ export function ColdOpenScene() {
 
 	return (
 		<SceneFrame config={config}>
+			<section
+				aria-labelledby="first-visit-briefing-title"
+				data-testid="first-visit-briefing"
+				className="mb-4 rounded-sm border border-deck-line bg-deck-raised/40"
+			>
+				<div className="border-b border-deck-line px-3 py-2.5 sm:px-4 sm:py-3">
+					<h2
+						id="first-visit-briefing-title"
+						className="font-instrument text-[11px] uppercase tracking-[0.2em] text-accent-deck"
+					>
+						First-visit briefing
+					</h2>
+				</div>
+
+				<dl className="grid divide-y divide-deck-line md:grid-cols-3 md:divide-x md:divide-y-0">
+					<div className="p-3 sm:p-4">
+						<dt className="font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted">
+							What it is
+						</dt>
+						<dd className="mt-2 text-sm leading-relaxed text-ink-deck">
+							A personal multi-agent Operator OS routes work to specialist
+							systems through shared state and closes the loop.
+						</dd>
+					</div>
+
+					<div className="p-3 sm:p-4">
+						<dt className="font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted">
+							Why it matters
+						</dt>
+						<dd className="mt-2 text-sm leading-relaxed text-ink-deck">
+							This console maps real architecture with deterministic synthetic
+							data. Evidence defines what is proven; authority defines what the
+							system may do. Separating them prevents invented proof or permission.
+						</dd>
+					</div>
+
+					<div className="flex flex-col items-start p-3 sm:p-4">
+						<dt className="font-instrument text-[10px] uppercase tracking-[0.18em] text-ink-deck-muted">
+							Do next
+						</dt>
+						<dd className="mt-2 flex flex-1 flex-col items-start text-sm leading-relaxed text-ink-deck">
+							<span>Follow the system from routing to its outbound airlock.</span>
+							<NavLink
+								to="/fleet"
+								data-testid="explore-invite"
+								className="mt-3 inline-flex min-h-11 items-center rounded-sm border border-accent-deck px-4 py-2 font-instrument text-[11px] uppercase tracking-[0.16em] text-accent-deck hover:bg-deck sm:min-h-0"
+							>
+								Start with routing -&gt;
+							</NavLink>
+						</dd>
+					</div>
+				</dl>
+			</section>
+
 			<div className="rounded-sm border border-deck-line bg-deck-raised/40 p-2">
 				<div className="relative">
 					<ColdOpen
@@ -88,13 +142,9 @@ export function ColdOpenScene() {
 						{caption(clock.t)}
 					</p>
 					{settled ? (
-						<NavLink
-							to="/fleet"
-							data-testid="explore-invite"
-							className="rounded-sm border border-accent-deck px-4 py-2 font-instrument text-[11px] uppercase tracking-[0.16em] text-accent-deck hover:bg-deck"
-						>
-							Explore each layer -&gt;
-						</NavLink>
+						<span className="font-instrument text-[10px] uppercase tracking-[0.14em] text-accent-deck">
+							Replay complete · next stop: routing
+						</span>
 					) : null}
 				</div>
 			</div>
