@@ -56,13 +56,13 @@ function ShellChrome() {
 				main.scrollTop = 0;
 				main.scrollLeft = 0;
 				// Browser history can restore the previously focused navigation link
-				// after the popstate handlers finish. Move focus on the next frame so
-				// the new scene heading remains the final, announced focus target.
-				const focusFrame = window.requestAnimationFrame(() => {
+				// after the popstate handlers finish. Move focus in the next task so
+				// this remains reliable even when reduced motion defers animation frames.
+				const focusTimer = window.setTimeout(() => {
 					main.querySelector<HTMLElement>("[data-scene-heading]")?.focus();
-				});
+				}, 0);
 				previousPath.current = location.pathname;
-				return () => window.cancelAnimationFrame(focusFrame);
+				return () => window.clearTimeout(focusTimer);
 			}
 		}
 		previousPath.current = location.pathname;
