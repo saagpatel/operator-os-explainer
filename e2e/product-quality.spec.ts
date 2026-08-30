@@ -267,6 +267,29 @@ test.describe("keyboard, focus, motion, and state", () => {
 });
 
 test.describe("scene interaction dispositions", () => {
+	test("opening gives a first-time visitor an immediate route into the system", async ({
+		page,
+	}) => {
+		await page.emulateMedia({ reducedMotion: "no-preference" });
+		await page.goto("/", { waitUntil: "domcontentloaded" });
+
+		const briefing = page.getByRole("region", {
+			name: "First-visit briefing",
+		});
+		await expect(briefing).toContainText("personal multi-agent Operator OS");
+		await expect(briefing).toContainText(
+			"Evidence defines what is proven; authority defines what the system may do",
+		);
+		await expect(briefing).toContainText("deterministic synthetic data");
+
+		const start = page.getByRole("link", { name: /start with routing/i });
+		await expect(start).toBeVisible();
+		await start.focus();
+		await start.press("Enter");
+		await expect(page).toHaveURL(/\/fleet$/);
+		await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
+	});
+
 	test("opening settles deterministically under reduced motion", async ({ page }) => {
 		await openStable(page, "/");
 		await expect(page.getByTestId("open-caption")).toContainText("Synced to the build log");

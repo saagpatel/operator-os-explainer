@@ -44,6 +44,22 @@ function renderOpen() {
 }
 
 describe("ColdOpenScene", () => {
+	it("explains the system, trust boundary, and immediate next step", () => {
+		renderOpen();
+
+		const briefing = screen.getByRole("region", {
+			name: "First-visit briefing",
+		});
+		expect(briefing).toHaveTextContent("personal multi-agent Operator OS");
+		expect(briefing).toHaveTextContent(
+			"Evidence defines what is proven; authority defines what the system may do",
+		);
+		expect(briefing).toHaveTextContent("deterministic synthetic data");
+		expect(
+			screen.getByRole("link", { name: /start with routing/i }),
+		).toHaveAttribute("href", "/fleet");
+	});
+
 	it("autoplays on load (full motion) with the instruction dropped in", () => {
 		renderOpen();
 		expect(screen.getByTestId("harness-playing").textContent).toBe("true");
@@ -69,12 +85,14 @@ describe("ColdOpenScene", () => {
 		expect(screen.getByTestId("co-shipped")).toBeInTheDocument();
 	});
 
-	it("settles with the explore invite wired to the fleet scene", () => {
+	it("keeps the routing invite available while the replay settles", () => {
 		renderOpen();
 		fireEvent.click(screen.getByText("halt"));
-		expect(screen.queryByTestId("explore-invite")).toBeNull();
+		expect(screen.getByTestId("explore-invite")).toHaveAttribute(
+			"href",
+			"/fleet",
+		);
 		fireEvent.click(screen.getByText("scrub-18000"));
-		const invite = screen.getByTestId("explore-invite");
-		expect(invite).toHaveAttribute("href", "/fleet");
+		expect(screen.getByText(/replay complete/i)).toBeInTheDocument();
 	});
 });
