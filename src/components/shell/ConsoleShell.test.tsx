@@ -61,4 +61,16 @@ describe("ConsoleShell", () => {
 		expect(document.title).toBe("The Fleet — Anatomy of an AI Operator OS");
 		await waitFor(() => expect(heading).toHaveFocus());
 	});
+
+	it("restores scene focus when browser history dispatches popstate", async () => {
+		renderShell("/fleet");
+		const heading = await screen.findByRole("heading", { name: "The Fleet" });
+		const safetyLink = screen.getByRole("link", { name: "03 Safety" });
+		safetyLink.focus();
+		expect(safetyLink).toHaveFocus();
+
+		act(() => window.dispatchEvent(new PopStateEvent("popstate")));
+
+		await waitFor(() => expect(heading).toHaveFocus());
+	});
 });
