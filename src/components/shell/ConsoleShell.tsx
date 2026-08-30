@@ -68,6 +68,24 @@ function ShellChrome() {
 		previousPath.current = location.pathname;
 	}, [location.pathname]);
 
+	useEffect(() => {
+		let focusTimer: number | undefined;
+		const restoreHistoryFocus = () => {
+			window.clearTimeout(focusTimer);
+			focusTimer = window.setTimeout(() => {
+				mainRef.current
+					?.querySelector<HTMLElement>("[data-scene-heading]")
+					?.focus();
+			}, 0);
+		};
+
+		window.addEventListener("popstate", restoreHistoryFocus);
+		return () => {
+			window.removeEventListener("popstate", restoreHistoryFocus);
+			window.clearTimeout(focusTimer);
+		};
+	}, []);
+
 	return (
 		<div className="flex h-full flex-col bg-deck text-ink-deck">
 			<header className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-deck-line px-4 py-3 sm:px-6">
