@@ -59,6 +59,6 @@ describe("ConsoleShell", () => {
 
 		const heading = await screen.findByRole("heading", { name: "The Fleet" });
 		expect(document.title).toBe("The Fleet — Anatomy of an AI Operator OS");
-		expect(heading).toHaveFocus();
+		await waitFor(() => expect(heading).toHaveFocus());
 	});
 });
