@@ -5,7 +5,7 @@
  * render byte for byte. Asserts run-to-run determinism before writing, like
  * the dataset generator.
  */
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { DIAGRAMS } from "../src/diagrams/index.ts";
 import { renderDocs } from "../src/diagrams/render-docs.ts";
 import { renderSvgString } from "../src/diagrams/render-string.ts";
@@ -13,6 +13,12 @@ import { renderSvgString } from "../src/diagrams/render-string.ts";
 const OUT = "public/diagrams";
 mkdirSync(OUT, { recursive: true });
 mkdirSync("docs", { recursive: true });
+
+// A renamed or removed diagram must not leave its old file behind, or the
+// byte-for-byte check would bless an orphan the registry no longer knows.
+for (const stale of readdirSync(OUT).filter((f) => f.endsWith(".svg"))) {
+	rmSync(`${OUT}/${stale}`);
+}
 
 function deterministic(label: string, render: () => string): string {
 	const first = render();
