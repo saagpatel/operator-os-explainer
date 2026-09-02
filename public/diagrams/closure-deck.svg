@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 350" width="1120" height="350" role="img" aria-label="Closed vocabularies feed a pure seeded generator that writes one committed dataset; the app imports only that file, three gates fail the build on any escape, the bundle ships without source maps, and the release lineage is an orphan tree. The real stores have no wire into the app." font-family="Space Mono, ui-monospace, monospace">
+<defs>
+<marker id="closure-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e9e7df"/></marker>
+</defs>
+<rect width="1120" height="350" fill="#15191e"/>
+<line x1="560" y1="58" x2="560" y2="92" stroke="#9a9488" stroke-dasharray="3 4"/>
+<line x1="553" y1="100" x2="567" y2="114" stroke="#9a9488" stroke-width="1.5"/>
+<line x1="567" y1="100" x2="553" y2="114" stroke="#9a9488" stroke-width="1.5"/>
+<line x1="178" y1="172" x2="232" y2="172" stroke="#e9e7df" marker-end="url(#closure-arrow-fg)"/>
+<line x1="414" y1="172" x2="468" y2="172" stroke="#e9e7df" marker-end="url(#closure-arrow-fg)"/>
+<line x1="650" y1="172" x2="704" y2="172" stroke="#e9e7df" marker-end="url(#closure-arrow-fg)"/>
+<line x1="886" y1="172" x2="940" y2="172" stroke="#e9e7df" marker-end="url(#closure-arrow-fg)"/>
+<line x1="560" y1="248" x2="560" y2="262" stroke="#2a2f36"/>
+<line x1="440" y1="262" x2="650" y2="262" stroke="#2a2f36"/>
+<line x1="440" y1="262" x2="440" y2="278" stroke="#2a2f36"/>
+<line x1="650" y1="262" x2="650" y2="278" stroke="#2a2f36"/>
+<line x1="796" y1="248" x2="796" y2="262" stroke="#2a2f36"/>
+<line x1="796" y1="262" x2="870" y2="262" stroke="#2a2f36"/>
+<line x1="870" y1="262" x2="870" y2="278" stroke="#2a2f36"/>
+<rect x="472" y="12" width="176" height="46" fill="none" stroke="#9a9488" stroke-dasharray="4 4"/>
+<rect x="0" y="140" width="176" height="64" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="236" y="140" width="176" height="64" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="472" y="140" width="176" height="64" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="708" y="140" width="176" height="64" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="944" y="140" width="176" height="64" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="330" y="278" width="220" height="66" fill="#1b2027" stroke="#ff7a4d" stroke-width="1.5"/>
+<rect x="570" y="278" width="160" height="66" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="750" y="278" width="240" height="66" fill="#1b2027" stroke="#2a2f36"/>
+<text x="560" y="31" font-size="11" fill="#9a9488" text-anchor="middle" font-weight="700">bridge-db · personal-ops</text>
+<text x="560" y="47" font-size="10" fill="#9a9488" text-anchor="middle">the real stores</text>
+<text x="576" y="111" font-size="10" fill="#9a9488">no import · no fetch · no MCP</text>
+<text x="88" y="168" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">src/data/vocab.ts</text>
+<text x="88" y="186" font-size="10" fill="#9a9488" text-anchor="middle">closed vocabularies</text>
+<text x="88" y="224" font-size="9.5" fill="#9a9488" text-anchor="middle">24 codenames · 8 task classes</text>
+<text x="88" y="238" font-size="9.5" fill="#9a9488" text-anchor="middle">7 guard layers · 6 rules</text>
+<text x="324" y="168" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">src/data/generate.ts</text>
+<text x="324" y="186" font-size="10" fill="#9a9488" text-anchor="middle">pure: seed -&gt; data</text>
+<text x="324" y="224" font-size="9.5" fill="#9a9488" text-anchor="middle">SEED 0x0fe7a123 · mulberry32</text>
+<text x="324" y="238" font-size="9.5" fill="#9a9488" text-anchor="middle">no Date.now, no Math.random</text>
+<text x="560" y="168" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">src/data/dataset.json</text>
+<text x="560" y="186" font-size="10" fill="#9a9488" text-anchor="middle">committed artifact</text>
+<text x="560" y="224" font-size="9.5" fill="#9a9488" text-anchor="middle">46 events · 8 activity · 2 handoffs</text>
+<text x="560" y="238" font-size="9.5" fill="#9a9488" text-anchor="middle">the app's only data import</text>
+<text x="796" y="168" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">pnpm build</text>
+<text x="796" y="186" font-size="10" fill="#9a9488" text-anchor="middle">vite · sourcemap: false</text>
+<text x="796" y="224" font-size="9.5" fill="#9a9488" text-anchor="middle">no build-machine paths</text>
+<text x="796" y="238" font-size="9.5" fill="#9a9488" text-anchor="middle">in the shipped bundle</text>
+<text x="1032" y="168" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">release lineage</text>
+<text x="1032" y="186" font-size="10" fill="#9a9488" text-anchor="middle">orphan root · neutral author</text>
+<text x="1032" y="224" font-size="9.5" fill="#9a9488" text-anchor="middle">no merge base with dev, ever</text>
+<text x="1032" y="238" font-size="9.5" fill="#9a9488" text-anchor="middle">log -p scanned, not just tree</text>
+<text x="206" y="118" font-size="10" fill="#9a9488" text-anchor="middle">may only</text>
+<text x="206" y="130" font-size="10" fill="#9a9488" text-anchor="middle">emit members</text>
+<text x="442" y="118" font-size="10" fill="#9a9488" text-anchor="middle">written once,</text>
+<text x="442" y="130" font-size="10" fill="#9a9488" text-anchor="middle">at authoring</text>
+<text x="678" y="130" font-size="10" fill="#9a9488" text-anchor="middle">bundled</text>
+<text x="914" y="118" font-size="10" fill="#9a9488" text-anchor="middle">tree copied,</text>
+<text x="914" y="130" font-size="10" fill="#9a9488" text-anchor="middle">never merged</text>
+<text x="440" y="298" font-size="11.5" fill="#ff7a4d" text-anchor="middle" font-weight="700">closure.test.ts</text>
+<text x="440" y="314" font-size="10" fill="#9a9488" text-anchor="middle">every value in its allowlist</text>
+<text x="440" y="327" font-size="10" fill="#9a9488" text-anchor="middle">cost deltas sum to session cost</text>
+<text x="440" y="340" font-size="10" fill="#9a9488" text-anchor="middle">byte-identical · plants must fail</text>
+<text x="650" y="298" font-size="11.5" fill="#e9e7df" text-anchor="middle" font-weight="700">property.test.ts</text>
+<text x="650" y="314" font-size="10" fill="#9a9488" text-anchor="middle">closure holds across</text>
+<text x="650" y="327" font-size="10" fill="#9a9488" text-anchor="middle">sampled seeds</text>
+<text x="870" y="298" font-size="11.5" fill="#e9e7df" text-anchor="middle" font-weight="700">scripts/guard-scan.ts</text>
+<text x="870" y="314" font-size="10" fill="#9a9488" text-anchor="middle">source + dataset + dist</text>
+<text x="870" y="327" font-size="10" fill="#9a9488" text-anchor="middle">self-test: planted violations first</text>
+<text x="870" y="340" font-size="10" fill="#9a9488" text-anchor="middle">forbidden names stored as hashes</text>
+<text x="0" y="300" font-size="10" fill="#9a9488">GATES · any one failing fails the build</text>
+<text x="0" y="314" font-size="10" fill="#9a9488">the load-bearing gate is closure,</text>
+<text x="0" y="328" font-size="10" fill="#9a9488">not the scanner</text>
+</svg>

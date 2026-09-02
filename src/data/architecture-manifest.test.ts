@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
+import { DIAGRAMS } from "../diagrams/index.ts";
 import { SCENES } from "../scenes/index.ts";
 import {
 	ARCHITECTURE_CLAIM_IDS,
@@ -89,5 +90,17 @@ describe("PublicArchitectureManifestV1", () => {
 		}
 
 		expect([...referencedIds].sort()).toEqual([...ARCHITECTURE_CLAIM_IDS]);
+	});
+
+	it("binds every mechanism diagram's claims", () => {
+		const manifestIds = new Set(
+			architectureManifest.claims.map((claim) => claim.id),
+		);
+		for (const diagram of Object.values(DIAGRAMS)) {
+			expect(diagram.claims.length, `diagram ${diagram.id} needs provenance`).toBeGreaterThan(0);
+			for (const claimId of diagram.claims) {
+				expect(manifestIds.has(claimId), `diagram ${diagram.id} references ${claimId}`).toBe(true);
+			}
+		}
 	});
 });

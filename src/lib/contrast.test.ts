@@ -49,4 +49,13 @@ describe("contrast ledger (WCAG 2.1 AA)", () => {
 			contrastRatio(token("--ink-deck-muted"), deck),
 		).toBeGreaterThanOrEqual(4.5);
 	});
+
+	// The mechanism diagrams set text on raised panels (src/diagrams/).
+	it.each([
+		[token("--ink-deck"), token("--deck-raised")],
+		[token("--ink-deck-muted"), token("--deck-raised")],
+		[token("--accent-deck"), token("--deck-raised")],
+	])("%s on the raised panel %s clears AA", (fg, bg) => {
+		expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(4.5);
+	});
 });

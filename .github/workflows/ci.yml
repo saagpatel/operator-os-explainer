@@ -70,3 +70,10 @@ jobs:
         run: |
           pnpm generate
           git diff --exit-code -- src/data/dataset.json
+
+      # The mechanism diagrams and their docs page are rendered from
+      # src/diagrams/ by the same rule: committed output must equal a fresh render.
+      - name: Verify public/diagrams and docs/mechanisms.md are regenerable byte-for-byte
+        run: |
+          pnpm diagrams
+          git diff --exit-code -- public/diagrams docs/mechanisms.md
