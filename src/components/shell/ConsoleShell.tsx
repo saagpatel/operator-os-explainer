@@ -4,6 +4,7 @@ import {
 	SessionClockProvider,
 	useSessionClock,
 } from "../../clock/SessionClockProvider.tsx";
+import { useClockPermalink } from "../../clock/useClockPermalink.ts";
 import { SyntheticBadge } from "./SyntheticBadge";
 import { TransportBar } from "./TransportBar";
 import { SCENES } from "../../scenes/index.ts";
@@ -23,10 +24,14 @@ const NAV = [
  * ABOVE the outlet (SPEC 4.1), so the single rAF loop and clock state survive
  * scene navigation. The transport bar with its always-visible Pause
  * (SC 2.2.2) is part of the fixed chrome on every scene.
+ *
+ * This is also the router-aware boundary that owns the `?t=` permalink: the
+ * clock reports reader-initiated positions, the shell writes them to the URL.
  */
 export function ConsoleShell() {
+	const writeClockParam = useClockPermalink();
 	return (
-		<SessionClockProvider>
+		<SessionClockProvider onReaderSeek={writeClockParam}>
 			<ShellChrome />
 		</SessionClockProvider>
 	);
@@ -150,7 +155,7 @@ function ShellChrome() {
 				playing={clock.playing}
 				speed={clock.speed}
 				onPlayPause={clock.toggle}
-				onScrub={clock.scrub}
+				onScrub={clock.seek}
 				onSpeedChange={clock.setSpeed}
 				onStepBack={clock.stepBack}
 				onStepForward={clock.stepForward}

@@ -45,7 +45,14 @@ export interface SessionClock {
 	play: () => void;
 	pause: () => void;
 	toggle: () => void;
+	/** Programmatic clock move (auto-seek, scene defaults): leaves the URL alone. */
 	scrub: (t: number) => void;
+	/**
+	 * Reader-initiated positioning. Identical to `scrub` on the clock, but it
+	 * also reports the landing position to `onReaderSeek` so a router-aware
+	 * owner can make it the canonical, shareable position (SPEC 4.6).
+	 */
+	seek: (t: number) => void;
 	setSpeed: (s: Speed) => void;
 	stepBack: () => void;
 	stepForward: () => void;
@@ -80,7 +87,21 @@ export function isInteractiveShortcutTarget(target: EventTarget | null): boolean
 	);
 }
 
-export function SessionClockProvider({ children }: { children: ReactNode }) {
+export interface SessionClockProviderProps {
+	children: ReactNode;
+	/**
+	 * Called with the landing position of every READER-initiated move — the
+	 * scrubber, the step buttons, the positioning shortcuts — and never for
+	 * playback frames or programmatic `scrub`. The clock stays router-agnostic;
+	 * the owner decides that this position belongs in the URL.
+	 */
+	onReaderSeek?: (t: number) => void;
+}
+
+export function SessionClockProvider({
+	children,
+	onReaderSeek,
+}: SessionClockProviderProps) {
 	const duration = dataset.meta.sessionLengthMs;
 	const [t, setT] = useState(0);
 	const tRef = useRef(0);
@@ -127,13 +148,35 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 		return () => cancelAnimationFrame(raf);
 	}, [playing, speed, duration]);
 
-	const scrub = useCallback(
+	// Latest-ref so `seek` (and everything built on it) keeps a stable identity:
+	// the keydown listener and the context value must not churn when the owner's
+	// callback closes over a new location.
+	const readerSeekRef = useRef(onReaderSeek);
+	useEffect(() => {
+		readerSeekRef.current = onReaderSeek;
+	});
+
+	const applyPosition = useCallback(
 		(next: number) => {
 			const clamped = Math.min(duration, Math.max(0, next));
 			tRef.current = clamped;
 			setT(clamped);
+			return clamped;
 		},
 		[duration],
+	);
+	const scrub = useCallback(
+		(next: number) => {
+			applyPosition(next);
+		},
+		[applyPosition],
+	);
+	const seek = useCallback(
+		(next: number) => {
+			const clamped = applyPosition(next);
+			readerSeekRef.current?.(clamped);
+		},
+		[applyPosition],
 	);
 	const play = useCallback(() => setPlaying(true), []);
 	const pause = useCallback(() => setPlaying(false), []);
@@ -141,12 +184,12 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 
 	const boundaries = useMemo(() => eventBoundaries(dataset.events), []);
 	const stepBack = useCallback(
-		() => scrub(prevBoundary(boundaries, tRef.current)),
-		[boundaries, scrub],
+		() => seek(prevBoundary(boundaries, tRef.current)),
+		[boundaries, seek],
 	);
 	const stepForward = useCallback(
-		() => scrub(nextBoundary(boundaries, tRef.current, duration)),
-		[boundaries, scrub, duration],
+		() => seek(nextBoundary(boundaries, tRef.current, duration)),
+		[boundaries, seek, duration],
 	);
 
 	// ---- keyboard transport (SPEC 4.6): Space, arrows, Home/End ----
@@ -168,17 +211,17 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 					break;
 				case "Home":
 					e.preventDefault();
-					scrub(0);
+					seek(0);
 					break;
 				case "End":
 					e.preventDefault();
-					scrub(duration);
+					seek(duration);
 					break;
 			}
 		};
 		window.addEventListener("keydown", onKey);
 		return () => window.removeEventListener("keydown", onKey);
-	}, [toggle, stepBack, stepForward, scrub, duration]);
+	}, [toggle, stepBack, stepForward, seek, duration]);
 
 	const value = useMemo<SessionClock>(
 		() => ({
@@ -194,6 +237,7 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 			pause,
 			toggle,
 			scrub,
+			seek,
 			setSpeed,
 			stepBack,
 			stepForward,
@@ -214,6 +258,7 @@ export function SessionClockProvider({ children }: { children: ReactNode }) {
 			pause,
 			toggle,
 			scrub,
+			seek,
 			stepBack,
 			stepForward,
 		],
