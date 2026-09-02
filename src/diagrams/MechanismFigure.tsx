@@ -19,11 +19,21 @@ const TONE_VAR: Record<Tone, string> = {
 };
 const paint = (t: Tone | "none") => (t === "none" ? "none" : TONE_VAR[t]);
 
+/**
+ * Below this container width the 1120-unit wide layout renders its 10-unit
+ * labels under 8.6 CSS px, so the phone layout takes over even on a desktop
+ * viewport. The phone layout is then capped so its labels stay a sane size.
+ */
+const WIDE_MIN_PX = 960;
+const COMPACT_MAX_PX = 480;
+
 export function MechanismFigure({ model }: { model: DiagramModel }) {
-	const { ref, variant: g, fs } = useVizScale({
-		wide: model.wide,
-		compact: model.compact,
-	});
+	const {
+		ref,
+		variant: g,
+		fs,
+		compact,
+	} = useVizScale({ wide: model.wide, compact: model.compact }, { minWideWidth: WIDE_MIN_PX });
 	const badge = ASSURANCE_LABEL[assuranceFor(model.claims)];
 
 	return (
@@ -40,6 +50,7 @@ export function MechanismFigure({ model }: { model: DiagramModel }) {
 				role="img"
 				aria-label={model.ariaLabel}
 				className="block w-full font-instrument"
+				style={compact ? { maxWidth: COMPACT_MAX_PX } : undefined}
 			>
 				<defs>
 					{arrowTones(g).map((tone) => (

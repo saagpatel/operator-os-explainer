@@ -44,6 +44,22 @@ afterEach(() => {
 });
 
 describe("useVizScale", () => {
+	it("falls back to compact in a narrow column when minWideWidth asks for it", () => {
+		setViewport(false);
+		const { resizeTo } = installResizeObserver();
+		const { result } = renderHook(() =>
+			useVizScale({ wide: WIDE, compact: COMPACT }, { minWideWidth: 960 }),
+		);
+		act(() => result.current.ref(document.createElement("div")));
+		resizeTo(720);
+		expect(result.current.compact).toBe(true);
+		expect(result.current.variant).toBe(COMPACT);
+		// wide again once the column is wide enough
+		resizeTo(1000);
+		expect(result.current.compact).toBe(false);
+		expect(result.current.variant).toBe(WIDE);
+	});
+
 	it("keeps the wide variant and untouched label sizes above the breakpoint", () => {
 		setViewport(false);
 		const { resizeTo } = installResizeObserver();

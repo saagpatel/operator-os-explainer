@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -130,6 +130,13 @@ describe("every registered diagram", () => {
 			}
 		},
 	);
+
+	it("ships exactly one file per diagram and ground, nothing orphaned", () => {
+		const expected = Object.keys(DIAGRAMS)
+			.flatMap((id) => [`${id}-deck.svg`, `${id}-paper.svg`])
+			.sort();
+		expect(readdirSync("public/diagrams").sort()).toEqual(expected);
+	});
 
 	it("the committed docs page matches a fresh render byte for byte", () => {
 		const fresh = renderDocs(Object.values(DIAGRAMS));

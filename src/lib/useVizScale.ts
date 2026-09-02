@@ -52,26 +52,44 @@ function prefersCompact(): boolean {
  * a clock tick: `fs` keeps a stable identity across frames and the scrub path
  * allocates nothing extra.
  */
-export function useVizScale<T extends VizVariant>(variants: {
-	wide: T;
-	compact: T;
-}): VizScale<T> {
+export function useVizScale<T extends VizVariant>(
+	variants: {
+		wide: T;
+		compact: T;
+	},
+	opts: {
+		/**
+		 * Container width in CSS px below which the compact variant is used even
+		 * on a desktop viewport, for vizes whose wide labels would otherwise
+		 * render under MIN_LABEL_PX in a narrow column. Off by default.
+		 */
+		minWideWidth?: number;
+	} = {},
+): VizScale<T> {
+	const { minWideWidth } = opts;
 	const [width, setWidth] = useState(0);
 	const [compact, setCompact] = useState(prefersCompact);
 	const observer = useRef<ResizeObserver | null>(null);
 
-	const ref = useCallback((el: Element | null) => {
-		observer.current?.disconnect();
-		observer.current = null;
-		// jsdom implements neither; unmeasured falls through to the wide variant.
-		if (!el || typeof ResizeObserver === "undefined") return;
-		const ro = new ResizeObserver((entries) => {
-			setWidth(entries[0]?.contentRect.width ?? 0);
-			setCompact(prefersCompact());
-		});
-		ro.observe(el);
-		observer.current = ro;
-	}, []);
+	const ref = useCallback(
+		(el: Element | null) => {
+			observer.current?.disconnect();
+			observer.current = null;
+			// jsdom implements neither; unmeasured falls through to the wide variant.
+			if (!el || typeof ResizeObserver === "undefined") return;
+			const ro = new ResizeObserver((entries) => {
+				const measured = entries[0]?.contentRect.width ?? 0;
+				setWidth(measured);
+				setCompact(
+					prefersCompact() ||
+						(minWideWidth !== undefined && measured > 0 && measured < minWideWidth),
+				);
+			});
+			ro.observe(el);
+			observer.current = ro;
+		},
+		[minWideWidth],
+	);
 
 	const variant = compact ? variants.compact : variants.wide;
 
