@@ -36,18 +36,19 @@ const fixture: DiagramModel = {
 	compact: geometry,
 };
 
-/** `<text ...>label</text>` contents of any SVG markup, decoded. */
+const ENTITY: Record<string, string> = {
+	"&amp;": "&",
+	"&lt;": "<",
+	"&gt;": ">",
+	"&quot;": '"',
+	"&#x27;": "'",
+};
+
+/** `<text ...>label</text>` contents of any SVG markup, decoded in one pass. */
 export function textsIn(markup: string): Set<string> {
 	const out = new Set<string>();
 	for (const m of markup.matchAll(/<text[^>]*>([^<]*)<\/text>/g)) {
-		out.add(
-			m[1]
-				.replaceAll("&amp;", "&")
-				.replaceAll("&lt;", "<")
-				.replaceAll("&gt;", ">")
-				.replaceAll("&quot;", '"')
-				.replaceAll("&#x27;", "'"),
-		);
+		out.add((m[1] ?? "").replace(/&(?:amp|lt|gt|quot|#x27);/g, (entity) => ENTITY[entity] ?? entity));
 	}
 	return out;
 }
