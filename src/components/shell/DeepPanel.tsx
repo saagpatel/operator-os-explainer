@@ -10,10 +10,13 @@ export function DeepPanel({
 	title,
 	body,
 	children,
+	figures,
 }: {
 	title: string;
 	body: string;
 	children?: ReactNode;
+	/** Full-width mechanism figures, stacked under the prose and the extra. */
+	figures?: ReactNode;
 }) {
 	const [open, setOpen] = useState(false);
 	const regionId = useId();
@@ -34,16 +37,16 @@ export function DeepPanel({
 				<span aria-hidden="true">{open ? "−" : "+"}</span>
 			</button>
 			{open ? (
-				<div
-					id={regionId}
-					role="region"
-					aria-labelledby={labelId}
-					className="grid gap-6 pb-6 pt-1 lg:grid-cols-[minmax(0,42ch)_1fr]"
-				>
-					<p className="font-prose text-[15px] leading-relaxed text-ink-deck">
-						{body}
-					</p>
-					{children ? <div>{children}</div> : null}
+				<div id={regionId} role="region" aria-labelledby={labelId} className="pb-6 pt-1">
+					<div className="grid gap-6 lg:grid-cols-[minmax(0,42ch)_1fr]">
+						<p className="font-prose text-[15px] leading-relaxed text-ink-deck">
+							{body}
+						</p>
+						{children ? <div>{children}</div> : null}
+					</div>
+					{figures ? (
+						<div className="mt-10 grid gap-12 border-t border-deck-line pt-8">{figures}</div>
+					) : null}
 				</div>
 			) : null}
 		</div>

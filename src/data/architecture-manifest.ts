@@ -1,4 +1,4 @@
-import rawManifest from "../../public/architecture-manifest-v1.json";
+import rawManifest from "../../public/architecture-manifest-v1.json" with { type: "json" };
 import type { PublicArchitectureManifestV1 } from "../types/architecture.ts";
 
 /**

@@ -64,7 +64,13 @@ export function SpineScene() {
 							<p className="mb-1 font-instrument text-[10px] uppercase tracking-[0.18em] text-accent-deck">
 								{label}
 							</p>
-							<pre className="overflow-x-auto rounded-sm border border-deck-line bg-deck-raised/60 p-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted">
+							{/* scrollable, so it must be reachable by keyboard (WCAG 2.1.1) */}
+							<pre
+								role="group"
+								tabIndex={0}
+								aria-label={`${label} row as synthetic JSON`}
+								className="overflow-x-auto rounded-sm border border-deck-line bg-deck-raised/60 p-2 font-instrument text-[10px] leading-relaxed text-ink-deck-muted"
+							>
 								{JSON.stringify(sample, null, 2)}
 							</pre>
 						</div>

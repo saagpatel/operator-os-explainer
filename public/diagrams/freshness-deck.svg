@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 400" width="1120" height="400" role="img" aria-label="Left: 5 spokes (bridge, event-bus, overlay, auditor, evals-ledger), each its own system of record, read by the hub through an adapter; the hub never calls external services. Right: a 4-state machine (fresh, aging, stale, unavailable). A tick moves any state to fresh; age moves fresh to aging to stale. Only fresh has an exit labeled alert eligible. In the fixture the overlay spoke goes stale and never recovers." font-family="Space Mono, ui-monospace, monospace">
+<defs>
+<marker id="freshness-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ff7a4d"/></marker>
+<marker id="freshness-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#e9e7df"/></marker>
+</defs>
+<rect width="1120" height="400" fill="#15191e"/>
+<line x1="152" y1="60" x2="326" y2="170" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="152" y1="124" x2="326" y2="180" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="152" y1="188" x2="326" y2="188" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="152" y1="252" x2="326" y2="196" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="152" y1="316" x2="326" y2="206" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="482" y1="188" x2="560" y2="188" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="732" y1="80" x2="856" y2="80" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="925" y1="102" x2="925" y2="216" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="858" y1="240" x2="734" y2="240" stroke="#e9e7df" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="905" y1="218" x2="905" y2="104" stroke="#e9e7df" stroke-dasharray="3 3" marker-end="url(#freshness-arrow-fg)"/>
+<line x1="992" y1="80" x2="1110" y2="80" stroke="#ff7a4d" stroke-width="1.5" marker-end="url(#freshness-arrow-accent)"/>
+<path d="M 665 218 L 665 130 L 856 90" fill="none" stroke="#e9e7df" stroke-dasharray="3 3" marker-end="url(#freshness-arrow-fg)"/>
+<rect x="0" y="40" width="150" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="0" y="104" width="150" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="0" y="168" width="150" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="0" y="232" width="150" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="0" y="296" width="150" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="330" y="150" width="150" height="76" fill="#1b2027" stroke="#e9e7df"/>
+<rect x="600" y="60" width="130" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="860" y="60" width="130" height="40" fill="#1b2027" stroke="#ff7a4d" stroke-width="1.5"/>
+<rect x="860" y="220" width="130" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<rect x="600" y="220" width="130" height="40" fill="#1b2027" stroke="#2a2f36"/>
+<text x="0" y="22" font-size="10" fill="#9a9488" letter-spacing="2">HUB AND SPOKE</text>
+<text x="12" y="57" font-size="11" fill="#e9e7df" font-weight="700">bridge</text>
+<text x="12" y="71" font-size="10" fill="#9a9488">own store</text>
+<text x="12" y="121" font-size="11" fill="#e9e7df" font-weight="700">event-bus</text>
+<text x="12" y="135" font-size="10" fill="#9a9488">own store</text>
+<text x="12" y="185" font-size="11" fill="#e9e7df" font-weight="700">overlay</text>
+<text x="12" y="199" font-size="10" fill="#9a9488">own store</text>
+<text x="12" y="249" font-size="11" fill="#e9e7df" font-weight="700">auditor</text>
+<text x="12" y="263" font-size="10" fill="#9a9488">own store</text>
+<text x="12" y="313" font-size="11" fill="#e9e7df" font-weight="700">evals-ledger</text>
+<text x="12" y="327" font-size="10" fill="#9a9488">own store</text>
+<text x="200" y="96" font-size="10" fill="#9a9488">each read through</text>
+<text x="200" y="110" font-size="10" fill="#9a9488">an adapter</text>
+<text x="405" y="180" font-size="12" fill="#e9e7df" text-anchor="middle" font-weight="700">HUB</text>
+<text x="405" y="198" font-size="10" fill="#9a9488" text-anchor="middle">reads spokes</text>
+<text x="405" y="212" font-size="10" fill="#9a9488" text-anchor="middle">classifies freshness</text>
+<text x="330" y="252" font-size="10" fill="#9a9488">never calls an external service</text>
+<text x="330" y="266" font-size="10" fill="#9a9488">its one cross-system write:</text>
+<text x="330" y="280" font-size="10" fill="#9a9488">activity into the spine, fire and forget</text>
+<text x="521" y="178" font-size="10" fill="#9a9488" text-anchor="middle">per spoke</text>
+<text x="600" y="22" font-size="10" fill="#9a9488" letter-spacing="2">FRESHNESS STATE MACHINE · one per spoke</text>
+<text x="665" y="85" font-size="12" fill="#e9e7df" text-anchor="middle">unavailable</text>
+<text x="925" y="85" font-size="12" fill="#ff7a4d" text-anchor="middle" font-weight="700">fresh</text>
+<text x="925" y="245" font-size="12" fill="#e9e7df" text-anchor="middle">aging</text>
+<text x="665" y="245" font-size="12" fill="#e9e7df" text-anchor="middle">stale</text>
+<text x="794" y="70" font-size="10" fill="#9a9488" text-anchor="middle">tick arrives</text>
+<text x="934" y="164" font-size="10" fill="#9a9488">age passes</text>
+<text x="796" y="230" font-size="10" fill="#9a9488" text-anchor="middle">age passes</text>
+<text x="898" y="164" font-size="10" fill="#9a9488" text-anchor="end">new tick</text>
+<text x="672" y="150" font-size="10" fill="#9a9488">new tick</text>
+<text x="1050" y="70" font-size="10" fill="#ff7a4d" text-anchor="middle" font-weight="700">ALERT eligible</text>
+<text x="1050" y="100" font-size="10" fill="#9a9488" text-anchor="middle">the only exit</text>
+<text x="665" y="284" font-size="10" fill="#9a9488" text-anchor="middle">goes quiet</text>
+<text x="665" y="298" font-size="10" fill="#9a9488" text-anchor="middle">never lies</text>
+<text x="600" y="322" font-size="10" fill="#9a9488" letter-spacing="2">FIXTURE</text>
+<text x="600" y="338" font-size="10" fill="#9a9488">bridge: fresh T+10.0 s</text>
+<text x="600" y="351" font-size="10" fill="#9a9488">event-bus: fresh T+20.0 s</text>
+<text x="600" y="364" font-size="10" fill="#9a9488">overlay: stale T+50.0 s · dark to T+90.0 s</text>
+<text x="600" y="377" font-size="10" fill="#9a9488">auditor: aging T+35.0 s -&gt; fresh T+70.0 s</text>
+<text x="600" y="390" font-size="10" fill="#9a9488">evals-ledger: fresh T+65.0 s</text>
+</svg>

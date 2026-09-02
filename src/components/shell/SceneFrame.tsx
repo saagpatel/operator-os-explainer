@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
+import { diagramsFor } from "../../diagrams/index.ts";
+import { MechanismFigure } from "../../diagrams/MechanismFigure";
 import type { SceneConfig } from "../../types/scene.ts";
 import { DeepPanel } from "./DeepPanel";
 
 /**
  * Shared scene chrome: eyebrow, display title, layout slots, deep panel.
  * Every scene renders inside this frame so the console reads as one
- * instrument (SPEC 2.1).
+ * instrument (SPEC 2.1). The mechanism diagrams a scene carries are
+ * declared on the diagram models (src/diagrams), not chosen here.
  */
 export function SceneFrame({
 	config,
@@ -17,6 +20,7 @@ export function SceneFrame({
 	deepPanelExtra?: ReactNode;
 }) {
 	const number = String(config.number).padStart(2, "0");
+	const diagrams = diagramsFor(config.lens);
 	return (
 		<section className="relative mx-auto flex min-h-full w-full max-w-6xl flex-col px-4 py-8 sm:px-6">
 			{/* decorative ghost numeral: pseudo-element content keeps it out of
@@ -44,7 +48,15 @@ export function SceneFrame({
 
 			<div className="flex-1">{children}</div>
 
-			<DeepPanel title={config.deepPanel.title} body={config.deepPanel.body}>
+			<DeepPanel
+				title={config.deepPanel.title}
+				body={config.deepPanel.body}
+				figures={
+					diagrams.length > 0
+						? diagrams.map((model) => <MechanismFigure key={model.id} model={model} />)
+						: undefined
+				}
+			>
 				{deepPanelExtra}
 			</DeepPanel>
 		</section>

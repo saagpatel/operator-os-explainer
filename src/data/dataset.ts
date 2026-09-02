@@ -5,6 +5,6 @@
  * generate(SEED), whose return type is Dataset.
  */
 import type { Dataset } from "../types/data.ts";
-import datasetJson from "./dataset.json";
+import datasetJson from "./dataset.json" with { type: "json" };
 
 export const dataset = datasetJson as unknown as Dataset;

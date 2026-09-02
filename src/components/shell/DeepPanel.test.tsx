@@ -13,4 +13,14 @@ describe("DeepPanel", () => {
 		).toBeInTheDocument();
 		expect(disclosure).toHaveAttribute("aria-expanded", "true");
 	});
+
+	it("keeps its figures inside the region and hidden until opened", () => {
+		render(
+			<DeepPanel title="the evidence" body="Details" figures={<figure>a mechanism</figure>} />,
+		);
+		expect(screen.queryByText("a mechanism")).not.toBeInTheDocument();
+		fireEvent.click(screen.getByRole("button", { name: /the evidence/i }));
+		const region = screen.getByRole("region", { name: /the evidence/i });
+		expect(region).toContainElement(screen.getByText("a mechanism"));
+	});
 });

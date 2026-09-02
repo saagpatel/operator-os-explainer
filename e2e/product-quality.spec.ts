@@ -24,6 +24,17 @@ const viewports = [
 const titleFor = (heading: string) =>
 	`${heading} — Anatomy of an AI Operator OS`;
 
+/** Mechanism diagrams each scene's deep panel carries (src/diagrams placement). */
+const diagramsByRoute: Record<string, number> = {
+	"/": 0,
+	"/fleet": 0,
+	"/spine": 2,
+	"/safety": 1,
+	"/finale": 0,
+	"/hub": 2,
+	"/coda": 1,
+};
+
 async function openStable(page: Page, route: string) {
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.goto(route, { waitUntil: "domcontentloaded" });
@@ -428,12 +439,36 @@ test.describe("scene interaction dispositions", () => {
 			await disclosure.press("Enter");
 			const region = page.getByRole("region", { name: /go deeper/i });
 			await expect(region).toBeVisible();
+			const figures = region.locator("figure[data-diagram]");
+			await expect(figures).toHaveCount(diagramsByRoute[route.path] ?? 0);
+			for (const figure of await figures.all()) {
+				const svg = figure.getByRole("img");
+				await expect(svg).toBeVisible();
+				expect((await svg.getAttribute("aria-label"))?.length ?? 0).toBeGreaterThan(40);
+			}
 			const overflow = await page.evaluate(() =>
 				document.documentElement.scrollWidth - document.documentElement.clientWidth,
 			);
 			expect(overflow, `${route.path} expanded panel overflow`).toBe(0);
 		}
 	});
+
+	for (const width of [320, 1440] as const) {
+		for (const route of routes.filter((r) => (diagramsByRoute[r.path] ?? 0) > 0)) {
+			test(`${route.slug} deep panel with its diagrams passes WCAG checks at ${width}px`, async ({
+				page,
+			}) => {
+				await page.setViewportSize({ width, height: width === 320 ? 720 : 900 });
+				await openStable(page, route.path);
+				await page.getByRole("button", { name: /go deeper/i }).press("Enter");
+				await expect(page.getByRole("region", { name: /go deeper/i })).toBeVisible();
+				const results = await new AxeBuilder({ page })
+					.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+					.analyze();
+				expect(results.violations).toEqual([]);
+			});
+		}
+	}
 });
 
 test("all routes remain free of runtime console and page errors", async ({ page }) => {

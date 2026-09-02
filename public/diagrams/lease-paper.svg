@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 470" width="1120" height="470" role="img" aria-label="Three lanes: claude.ai, the spine, and Claude Code. Dispatch creates a pending handoff row; Claude Code reads the latest snapshot, picks the handoff up and receives a one-time completion capability; 15.5 s of mission work pass; both sides acknowledge a receipt; clear consumes the capability and the row reads cleared. Below, the SHIPPED tag on the activity row creates a sync obligation to the external build log." font-family="Space Mono, ui-monospace, monospace">
+<defs>
+<marker id="lease-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#b0451d"/></marker>
+<marker id="lease-arrow-fg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1a1c20"/></marker>
+</defs>
+<rect width="1120" height="470" fill="#f4efe4"/>
+<line x1="120" y1="80" x2="1120" y2="80" stroke="rgba(26,28,32,0.22)"/>
+<line x1="120" y1="200" x2="1120" y2="200" stroke="#1a1c20" stroke-width="2"/>
+<line x1="120" y1="320" x2="1120" y2="320" stroke="rgba(26,28,32,0.22)"/>
+<line x1="200" y1="86" x2="200" y2="186" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="340" y1="206" x2="340" y2="306" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="472" y1="314" x2="472" y2="214" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="496" y1="214" x2="496" y2="306" stroke="#b0451d" marker-end="url(#lease-arrow-accent)"/>
+<line x1="496" y1="336" x2="972" y2="336" stroke="#b0451d" stroke-dasharray="2 4"/>
+<line x1="840" y1="314" x2="840" y2="214" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="840" y1="186" x2="840" y2="94" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="980" y1="314" x2="980" y2="214" stroke="#b0451d" marker-end="url(#lease-arrow-accent)"/>
+<line x1="422" y1="431" x2="486" y2="431" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<line x1="682" y1="431" x2="746" y2="431" stroke="#1a1c20" marker-end="url(#lease-arrow-fg)"/>
+<rect x="580" y="52" width="180" height="290" fill="rgba(26,28,32,0.05)" stroke="rgba(26,28,32,0.22)" stroke-dasharray="4 4"/>
+<rect x="168" y="190" width="64" height="20" fill="#f4efe4" stroke="#1a1c20"/>
+<rect x="440" y="190" width="80" height="20" fill="#f4efe4" stroke="#1a1c20"/>
+<rect x="948" y="190" width="64" height="20" fill="#f4efe4" stroke="#1a1c20"/>
+<rect x="120" y="408" width="300" height="46" fill="rgba(26,28,32,0.05)" stroke="rgba(26,28,32,0.22)"/>
+<rect x="252" y="432" width="60" height="14" fill="none" stroke="#b0451d"/>
+<rect x="490" y="408" width="190" height="46" fill="rgba(26,28,32,0.05)" stroke="rgba(26,28,32,0.22)"/>
+<rect x="750" y="408" width="300" height="46" fill="rgba(26,28,32,0.05)" stroke="rgba(26,28,32,0.22)"/>
+<circle cx="200" cy="80" r="4" fill="#1a1c20"/>
+<circle cx="340" cy="200" r="4" fill="#1a1c20"/>
+<circle cx="840" cy="80" r="4" fill="#1a1c20"/>
+<text x="200" y="24" font-size="10" fill="#6b6457" text-anchor="middle">T+1.5 s</text>
+<text x="200" y="40" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">dispatch</text>
+<text x="340" y="24" font-size="10" fill="#6b6457" text-anchor="middle">T+2.2 s</text>
+<text x="340" y="40" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">snapshot</text>
+<text x="480" y="24" font-size="10" fill="#6b6457" text-anchor="middle">T+3.0 s</text>
+<text x="480" y="40" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">pickup</text>
+<text x="840" y="24" font-size="10" fill="#6b6457" text-anchor="middle">T+18.5 s</text>
+<text x="840" y="40" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">receipt</text>
+<text x="980" y="24" font-size="10" fill="#6b6457" text-anchor="middle">T+19.0 s</text>
+<text x="980" y="40" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">clear</text>
+<text x="670" y="176" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">15.5 s of mission work</text>
+<text x="670" y="194" font-size="10" fill="#6b6457" text-anchor="middle">fan out · guard fires · verify · ship</text>
+<text x="670" y="208" font-size="10" fill="#6b6457" text-anchor="middle">see The Fleet in Motion</text>
+<text x="0" y="78" font-size="11" fill="#1a1c20" font-weight="700">CLAUDE.AI</text>
+<text x="0" y="92" font-size="10" fill="#6b6457">dispatches · no filesystem</text>
+<text x="0" y="198" font-size="11" fill="#1a1c20" font-weight="700">SPINE</text>
+<text x="0" y="212" font-size="10" fill="#6b6457">bridge-db · handoff row</text>
+<text x="0" y="318" font-size="11" fill="#1a1c20" font-weight="700">CLAUDE CODE</text>
+<text x="0" y="332" font-size="10" fill="#6b6457">claims · has the repo</text>
+<text x="208" y="122" font-size="10" fill="#6b6457">create_handoff</text>
+<text x="208" y="136" font-size="10" fill="#6b6457">phase implement · PLAN.md</text>
+<text x="200" y="204" font-size="10" fill="#1a1c20" text-anchor="middle">pending</text>
+<text x="332" y="250" font-size="10" fill="#6b6457" text-anchor="end">reads the latest snapshot</text>
+<text x="332" y="264" font-size="10" fill="#6b6457" text-anchor="end">before touching anything</text>
+<text x="464" y="250" font-size="10" fill="#6b6457" text-anchor="end">pick_up_handoff</text>
+<text x="504" y="236" font-size="10" fill="#b0451d">completion capability</text>
+<text x="504" y="250" font-size="10" fill="#b0451d">one-time · expires · bearer</text>
+<text x="480" y="204" font-size="10" fill="#1a1c20" text-anchor="middle">active · cc</text>
+<text x="734" y="356" font-size="10" fill="#b0451d" text-anchor="middle">held in the claiming session · never logged</text>
+<text x="848" y="290" font-size="10" fill="#6b6457">receipt</text>
+<text x="848" y="122" font-size="10" fill="#6b6457">symmetric receipt:</text>
+<text x="848" y="136" font-size="10" fill="#6b6457">both sides acknowledge</text>
+<text x="972" y="250" font-size="10" fill="#b0451d" text-anchor="end">clear_handoff</text>
+<text x="972" y="264" font-size="10" fill="#b0451d" text-anchor="end">consumes the capability</text>
+<text x="980" y="204" font-size="10" fill="#1a1c20" text-anchor="middle">cleared</text>
+<text x="0" y="396" font-size="10" fill="#6b6457" letter-spacing="2">THE RECEIPT CHAIN · activity row 202</text>
+<text x="132" y="426" font-size="11" fill="#1a1c20" font-weight="700">shipped the export pipeline</text>
+<text x="132" y="442" font-size="10" fill="#6b6457">T+17.4 s · cc · tag</text>
+<text x="282" y="443" font-size="9" fill="#b0451d" text-anchor="middle">SHIPPED</text>
+<text x="454" y="420" font-size="9" fill="#6b6457" text-anchor="middle">creates</text>
+<text x="585" y="426" font-size="11" fill="#1a1c20" text-anchor="middle" font-weight="700">sync obligation</text>
+<text x="585" y="442" font-size="10" fill="#6b6457" text-anchor="middle">reconciled exactly once</text>
+<text x="714" y="420" font-size="9" fill="#6b6457" text-anchor="middle">ship</text>
+<text x="762" y="426" font-size="11" fill="#1a1c20" font-weight="700">external build log · buildlog/corveth</text>
+<text x="762" y="442" font-size="10" fill="#6b6457">T+18.0 s · sync state kept on the row</text>
+</svg>

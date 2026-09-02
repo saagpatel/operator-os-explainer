@@ -16,6 +16,7 @@
 		"test:e2e": "playwright test",
 		"typecheck": "tsc -b",
 		"generate": "node scripts/generate-dataset.ts",
+		"diagrams": "node scripts/render-diagrams.ts",
 		"guard": "node scripts/guard-scan.ts",
 		"verify:live": "node scripts/check-live-parity.ts"
 	},

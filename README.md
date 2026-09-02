@@ -38,6 +38,15 @@ resolves, every manifest claim is used, public evidence is revision-pinned,
 and private or operator-attested evidence is labeled without pretending it is
 publicly verifiable.
 
+## Mechanism diagrams
+
+Six static diagrams of the mechanisms (closure, handoff lease, airlock,
+freshness, spine rows, guard layers) live in each scene's "go deeper" panel and
+in [`docs/mechanisms.md`](docs/mechanisms.md). They are rendered from
+`src/diagrams/`, print only values computed from the dataset and vocabularies,
+wear the manifest's assurance level, and are regenerated with `pnpm diagrams`;
+CI fails if a committed file drifts from a fresh render.
+
 ## Accessibility
 
 Always-visible Pause on the global transport (WCAG SC 2.2.2), keyboard
@@ -58,6 +67,7 @@ pnpm install
 pnpm dev        # local console
 pnpm test       # unit + closure + property + contrast gates
 pnpm generate   # re-emit src/data/dataset.json from the seeded generator
+pnpm diagrams   # re-emit public/diagrams/*.svg from src/diagrams/
 pnpm guard      # forbidden-pattern scan (add --git for history)
 pnpm build      # production bundle (sourcemaps off)
 ```
