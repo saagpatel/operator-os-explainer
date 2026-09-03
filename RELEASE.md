@@ -99,6 +99,13 @@ A real publish is the same sequence, run deliberately by hand:
    fetchable versioned assets. Only after this proof may the two public aliases
    be pointed at that exact preview deployment.
 
+   Deployment Protection answers every generated `*.vercel.app` URL with a
+   redirect to Vercel SSO, and the check reports that as a failure that names
+   the fix: export `VERCEL_AUTOMATION_BYPASS_SECRET` with the value from the
+   project's Protection Bypass for Automation setting and rerun. The secret
+   travels only as a request header; never commit it or print it. The public
+   aliases in step 9 are not protected and need no secret.
+
 9. **Read back both live aliases.** With the Vercel CLI authenticated, run:
 
        VERCEL_TEAM_SCOPE=<team-slug> EXPECTED_DEPLOYMENT_ID=<dpl_...> pnpm verify:live
