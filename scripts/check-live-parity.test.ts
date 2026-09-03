@@ -122,6 +122,9 @@ describe("live parity contract", () => {
 		expect(seen[0]).not.toHaveProperty("x-vercel-protection-bypass");
 		expect(seen[1]["x-vercel-protection-bypass"]).toBe("secret-value");
 		expect(seen[1]["user-agent"]).toBe("operator-os-explainer-live-parity/1");
+		for (const headers of seen) {
+			expect(headers["x-vercel-skip-toolbar"]).toBe("1");
+		}
 	});
 
 	it("names the bypass variable when a deployment redirects to Vercel SSO", async () => {

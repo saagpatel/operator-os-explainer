@@ -230,6 +230,10 @@ export async function fetchBytes(
 		redirect: "manual",
 		headers: {
 			"user-agent": "operator-os-explainer-live-parity/1",
+			// Preview deployments append the Vercel Toolbar script after </html>
+			// on the root document only, which breaks the one-shell comparison.
+			// Vercel skips the injection when this header is present.
+			"x-vercel-skip-toolbar": "1",
 			...protectionBypassHeaders(environment),
 		},
 	});
