@@ -104,7 +104,9 @@ A real publish is the same sequence, run deliberately by hand:
    the fix: export `VERCEL_AUTOMATION_BYPASS_SECRET` with the value from the
    project's Protection Bypass for Automation setting and rerun. The secret
    travels only as a request header; never commit it or print it. The public
-   aliases in step 9 are not protected and need no secret.
+   aliases in step 9 are not protected and need no secret. The check also asks
+   Vercel to skip the preview toolbar injection, so a preview's root document
+   hashes the same as its rewritten routes.
 
 9. **Read back both live aliases.** With the Vercel CLI authenticated, run:
 
