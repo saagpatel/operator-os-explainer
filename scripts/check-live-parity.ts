@@ -203,17 +203,45 @@ function inspectDeployment(url: string): Deployment {
 
 type Fetcher = (url: string, init: RequestInit) => Promise<Response>;
 
+const PROTECTION_BYPASS_HEADER = "x-vercel-protection-bypass";
+const PROTECTION_BYPASS_ENV = "VERCEL_AUTOMATION_BYPASS_SECRET";
+const VERCEL_SSO_REDIRECT = "https://vercel.com/sso-api";
+
+/**
+ * Deployment Protection answers every generated *.vercel.app URL with a 302
+ * to Vercel SSO, which this check treats as a failure. The project's
+ * "Protection Bypass for Automation" secret, when present in the
+ * environment, is sent as a header so a protected preview can be read.
+ * Custom-domain aliases are never protected and need no secret.
+ */
+export function protectionBypassHeaders(
+	environment: Record<string, string | undefined> = process.env,
+): Record<string, string> {
+	const secret = environment[PROTECTION_BYPASS_ENV]?.trim();
+	return secret ? { [PROTECTION_BYPASS_HEADER]: secret } : {};
+}
+
 export async function fetchBytes(
 	url: string,
 	fetcher: Fetcher = fetch,
+	environment: Record<string, string | undefined> = process.env,
 ): Promise<{ bytes: ArrayBuffer; type: string }> {
 	const response = await fetcher(url, {
 		redirect: "manual",
-		headers: { "user-agent": "operator-os-explainer-live-parity/1" },
+		headers: {
+			"user-agent": "operator-os-explainer-live-parity/1",
+			...protectionBypassHeaders(environment),
+		},
 	});
 	if (response.status >= 300 && response.status < 400) {
+		const location = response.headers.get("location") ?? "an unknown location";
+		if (location.startsWith(VERCEL_SSO_REDIRECT)) {
+			throw new Error(
+				`${url} is behind Vercel Deployment Protection (HTTP ${response.status} to Vercel SSO); set ${PROTECTION_BYPASS_ENV} from the project's Protection Bypass for Automation setting`,
+			);
+		}
 		throw new Error(
-			`${url} redirected with HTTP ${response.status} to ${response.headers.get("location") ?? "an unknown location"}`,
+			`${url} redirected with HTTP ${response.status} to ${location}`,
 		);
 	}
 	if (!response.ok) {

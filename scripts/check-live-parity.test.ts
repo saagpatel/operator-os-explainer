@@ -103,4 +103,41 @@ describe("live parity contract", () => {
 		).rejects.toThrow("redirected with HTTP 302");
 		expect(redirectMode).toBe("manual");
 	});
+
+	it("sends the protection bypass secret only when the environment carries one", async () => {
+		const seen: Array<Record<string, string>> = [];
+		const recordingFetch = async (_url: string, init: RequestInit) => {
+			seen.push({ ...(init.headers as Record<string, string>) });
+			return new Response("ok", {
+				status: 200,
+				headers: { "content-type": "text/plain" },
+			});
+		};
+
+		await fetchBytes("https://example.test/", recordingFetch, {});
+		await fetchBytes("https://example.test/", recordingFetch, {
+			VERCEL_AUTOMATION_BYPASS_SECRET: " secret-value ",
+		});
+
+		expect(seen[0]).not.toHaveProperty("x-vercel-protection-bypass");
+		expect(seen[1]["x-vercel-protection-bypass"]).toBe("secret-value");
+		expect(seen[1]["user-agent"]).toBe("operator-os-explainer-live-parity/1");
+	});
+
+	it("names the bypass variable when a deployment redirects to Vercel SSO", async () => {
+		const ssoFetch = async () =>
+			new Response(null, {
+				status: 302,
+				headers: {
+					location:
+						"https://vercel.com/sso-api?url=https%3A%2F%2Fexample.vercel.app%2F&nonce=abc",
+				},
+			});
+
+		await expect(
+			fetchBytes("https://example.vercel.app/", ssoFetch, {}),
+		).rejects.toThrow(
+			"behind Vercel Deployment Protection (HTTP 302 to Vercel SSO); set VERCEL_AUTOMATION_BYPASS_SECRET",
+		);
+	});
 });
