@@ -4,6 +4,7 @@ import {
 	SessionClockProvider,
 	useSessionClock,
 } from "../../clock/SessionClockProvider.tsx";
+import { useTransportPermalink } from "../../clock/useTransportPermalink.ts";
 import { SyntheticBadge } from "./SyntheticBadge";
 import { TransportBar } from "./TransportBar";
 import { SCENES } from "../../scenes/index.ts";
@@ -34,6 +35,7 @@ export function ConsoleShell() {
 
 function ShellChrome() {
 	const clock = useSessionClock();
+	const transport = useTransportPermalink();
 	const location = useLocation();
 	const mainRef = useRef<HTMLElement | null>(null);
 	const navRef = useRef<HTMLElement | null>(null);
@@ -150,10 +152,10 @@ function ShellChrome() {
 				playing={clock.playing}
 				speed={clock.speed}
 				onPlayPause={clock.toggle}
-				onScrub={clock.scrub}
+				onScrub={transport.scrub}
 				onSpeedChange={clock.setSpeed}
-				onStepBack={clock.stepBack}
-				onStepForward={clock.stepForward}
+				onStepBack={transport.stepBack}
+				onStepForward={transport.stepForward}
 			/>
 		</div>
 	);
