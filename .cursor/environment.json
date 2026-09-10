@@ -1,0 +1,4 @@
+{
+  "name": "operator-os-explainer",
+  "install": "set -eu; corepack enable; corepack prepare pnpm@11.15.0 --activate; pnpm install --frozen-lockfile"
+}
