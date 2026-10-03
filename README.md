@@ -20,7 +20,7 @@ redaction**:
    coinages.
 3. **No model-authored free text.** Summaries are templates over closed word
    lists; numbers are hand-set and deterministic.
-4. **Closure test.** `src/data/closure.test.ts` fails the build if any
+4. **Closure test.** `src/data/closure.test.ts` fails `pnpm test` if any
    emitted value escapes its field's allowlist, and a property test holds
    that closed across sampled seeds. Two generator runs are byte-identical.
 5. **Pattern scanner.** `scripts/guard-scan.ts` backstops the allowlists
@@ -49,16 +49,16 @@ CI fails if a committed file drifts from a fresh render.
 
 ## Accessibility
 
-Always-visible Pause on the global transport (WCAG SC 2.2.2), keyboard
+Always-visible Play/Pause control on the global transport (WCAG SC 2.2.2), keyboard
 transport (Space, arrows, Home/End), reduced motion honored via the OS
 preference and an in-UI toggle (cuts instead of glides, particles off, no
-autoplay, scrubber always works), and every text role contrast-checked
-against its real background by a standing test.
+autoplay, scrubber always works), and the contrast ledger's text-color pairs
+checked against stylesheet background tokens by a standing test.
 
 ## Stack
 
-Vite + React 19 + TypeScript strict, react-router v7 (SPA), motion, D3
-math submodules, Canvas for dense flow layers, Tailwind, Vitest.
+Vite + React 19 + TypeScript strict, react-router v8 (SPA), motion,
+Canvas for dense flow layers, Tailwind, Vitest.
 
 ## Develop
 
