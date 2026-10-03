@@ -62,15 +62,28 @@ math submodules, Canvas for dense flow layers, Tailwind, Vitest.
 
 ## Develop
 
+Run from the repository root with Node `^22.22.0` or `^24.0.0` and
+`pnpm@11.15.0`, as pinned in `package.json` and CI.
+
 ```sh
-pnpm install
-pnpm dev        # local console
-pnpm test       # unit + closure + property + contrast gates
-pnpm generate   # re-emit src/data/dataset.json from the seeded generator
-pnpm diagrams   # re-emit public/diagrams/*.svg from src/diagrams/
-pnpm guard      # forbidden-pattern scan (add --git for history)
-pnpm build      # production bundle (sourcemaps off)
+pnpm install --frozen-lockfile
+pnpm dev        # local console with committed synthetic data
+pnpm exec vitest run src/data/closure.test.ts  # example focused fixture test
 ```
+
+The complete local gate is in [AGENTS.md](AGENTS.md) and mirrors
+[CI](.github/workflows/ci.yml): typecheck, tests, a fresh build, then the guard
+scan and both generator-drift checks. Build before scanning so `dist/` is
+current. Generator commands write committed artifacts; inspect any drift before
+committing it. There is no separate lint/format script.
+
+For changed browser behavior, run `pnpm test:e2e` after installing dependencies.
+[Playwright](playwright.config.ts) uses installed Google Chrome and a local dev
+server on `127.0.0.1:4173`; keep that port free rather than reusing an unrelated
+server. Tests use synthetic application data. No browser run is needed for a
+pure documentation change. `pnpm verify:live` is a separate hosted-deployment
+check with provider prerequisites in [RELEASE.md](RELEASE.md), not a local test.
+Preserve the release/dev lineage separation described there.
 
 ## License
 
